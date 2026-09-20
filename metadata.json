@@ -1,0 +1,6 @@
+{
+  "name": "EdgeDocker Sim - Jetson Orin Nano, Pi 5 & Thor Nano",
+  "description": "Simulate and benchmark Docker containers from GitHub on Jetson Orin Nano, Raspberry Pi 5, and NVIDIA Thor Nano edge hardware.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
