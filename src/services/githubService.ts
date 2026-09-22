@@ -12,6 +12,27 @@ export interface GitHubRepoInfo {
   detectedType: DockerConfig['workload']['type'];
 }
 
+/**
+ * Strict validator for GitHub usernames / organizations and repository names.
+ * Prevents shell injection, directory traversal, and malformed inputs.
+ */
+function validateGitHubCoordinates(owner: string, repo: string): { safeOwner: string; safeRepo: string } {
+  // GitHub username rule: Alphanumeric and single hyphens, 1-39 chars, cannot begin or end with hyphen
+  const ownerRegex = /^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/;
+  if (!ownerRegex.test(owner)) {
+    throw new Error(`Invalid GitHub organization or user name: "${owner}". Only alphanumeric characters and single hyphens are permitted.`);
+  }
+
+  // GitHub repository rule: Alphanumeric, underscores, hyphens, and periods, 1-100 chars
+  // Explicitly disallow '..' or path traversal fragments
+  const repoRegex = /^[a-zA-Z0-9_.-]{1,100}$/;
+  if (!repoRegex.test(repo) || repo.includes('..')) {
+    throw new Error(`Invalid GitHub repository name: "${repo}". Only letters, numbers, hyphens, periods, and underscores are permitted.`);
+  }
+
+  return { safeOwner: owner, safeRepo: repo };
+}
+
 export async function fetchGitHubRepoDetails(url: string): Promise<{
   repoInfo: GitHubRepoInfo;
   dockerfile: string;
@@ -19,27 +40,33 @@ export async function fetchGitHubRepoDetails(url: string): Promise<{
   suggestedConfig: Partial<DockerConfig>;
 }> {
   // Normalize GitHub URL
-  const cleanUrl = url.trim().replace(/\/+$/, '');
-  const match = cleanUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/i);
+  const trimmed = url.trim().replace(/\/+$/, '');
+  const match = trimmed.match(/^(?:https?:\/\/)?(?:www\.)?github\.com\/([^\/]+)\/([^\/]+?)(?:\.git|\/)?$/i);
 
   if (!match) {
     throw new Error('Please enter a valid GitHub repository URL (e.g. https://github.com/ultralytics/ultralytics)');
   }
 
-  const owner = match[1];
-  const repo = match[2].replace(/\.git$/, '');
-  const repoKey = `${owner}/${repo}`.toLowerCase();
+  const rawOwner = match[1];
+  const rawRepo = match[2].replace(/\.git$/, '');
+
+  // Perform strict sanitization and validation to prevent shell injection risks
+  const { safeOwner, safeRepo } = validateGitHubCoordinates(rawOwner, rawRepo);
+  const canonicalUrl = `https://github.com/${safeOwner}/${safeRepo}`;
+  const canonicalCloneUrl = `https://github.com/${safeOwner}/${safeRepo}.git`;
+  const repoKey = `${safeOwner}/${safeRepo}`.toLowerCase();
+  const safeServiceName = safeRepo.toLowerCase().replace(/[^a-z0-9_-]/g, '-').replace(/^-+|-+$/g, '') || 'edge-service';
 
   // Check if we have an instant curated preset for this repo
   const matchedPreset = GITHUB_PRESETS.find(p => p.repoUrl.toLowerCase().includes(repoKey));
   if (matchedPreset) {
     return {
       repoInfo: {
-        name: repo,
-        fullName: `${owner}/${repo}`,
+        name: safeRepo,
+        fullName: `${safeOwner}/${safeRepo}`,
         description: matchedPreset.description,
-        stars: 35000,
-        forks: 7200,
+        stars: parseInt(matchedPreset.stars.replace(/[^0-9]/g, ''), 10) * (matchedPreset.stars.includes('k') ? 1000 : 1) || 5000,
+        forks: 1200,
         defaultBranch: matchedPreset.branch,
         hasDockerfile: true,
         detectedType: matchedPreset.workloadType,
@@ -47,7 +74,7 @@ export async function fetchGitHubRepoDetails(url: string): Promise<{
       dockerfile: matchedPreset.dockerfile,
       dockerCompose: matchedPreset.dockerCompose,
       suggestedConfig: {
-        repoUrl: cleanUrl,
+        repoUrl: canonicalUrl,
         branch: matchedPreset.branch,
         workload: {
           type: matchedPreset.workloadType,
@@ -61,29 +88,75 @@ export async function fetchGitHubRepoDetails(url: string): Promise<{
     };
   }
 
-  // Try real remote fetch via raw.githubusercontent.com for Dockerfile
+  // Attempt live GitHub API metadata lookup for real stars, description & default branch
+  let apiDescription = `Edge-ready containerization for ${safeOwner}/${safeRepo} repository.`;
+  let apiStars = 150;
+  let apiForks = 45;
+  let defaultBranch = 'main';
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
+    const apiRes = await fetch(`https://api.github.com/repos/${safeOwner}/${safeRepo}`, {
+      headers: { 'Accept': 'application/vnd.github.v3+json' },
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    if (apiRes.ok) {
+      const meta = await apiRes.json();
+      if (meta.description) apiDescription = meta.description;
+      if (typeof meta.stargazers_count === 'number') apiStars = meta.stargazers_count;
+      if (typeof meta.forks_count === 'number') apiForks = meta.forks_count;
+      if (meta.default_branch) defaultBranch = meta.default_branch;
+    }
+  } catch {
+    // Graceful fallback on network/rate-limit error
+  }
+
+  // Search across common branches and subdirectories for an existing Dockerfile
   let remoteDockerfile = '';
-  const branchesToTry = ['main', 'master'];
+  const branchesToTry = [defaultBranch, 'main', 'master', 'dev', 'develop'].filter((b, idx, arr) => arr.indexOf(b) === idx);
+  const pathsToTry = [
+    'Dockerfile',
+    'docker/Dockerfile',
+    '.docker/Dockerfile',
+    'Dockerfile.arm64',
+    'docker/Dockerfile.arm64',
+    'deploy/Dockerfile',
+  ];
+
+  fileSearchLoop:
   for (const branch of branchesToTry) {
-    try {
-      const dockerfileRes = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/Dockerfile`, {
-        headers: { 'Accept': 'text/plain' },
-      });
-      if (dockerfileRes.ok) {
-        remoteDockerfile = await dockerfileRes.text();
-        break;
+    for (const filePath of pathsToTry) {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 2000);
+        const dockerfileRes = await fetch(
+          `https://raw.githubusercontent.com/${safeOwner}/${safeRepo}/${branch}/${filePath}`,
+          {
+            headers: { 'Accept': 'text/plain' },
+            signal: controller.signal,
+          }
+        );
+        clearTimeout(timeout);
+
+        if (dockerfileRes.ok) {
+          remoteDockerfile = await dockerfileRes.text();
+          break fileSearchLoop;
+        }
+      } catch {
+        // Continue searching
       }
-    } catch {
-      // Continue to next branch or fallback
     }
   }
 
   // Determine workload heuristic
   let detectedType: DockerConfig['workload']['type'] = 'vision';
-  let modelName = `${repo}-edge-model`;
-  const lowerRepo = repo.toLowerCase();
+  let modelName = `${safeRepo}-edge-model`;
+  const lowerRepo = safeRepo.toLowerCase();
 
-  if (lowerRepo.includes('llama') || lowerRepo.includes('llm') || lowerRepo.includes('gpt') || lowerRepo.includes('vllm')) {
+  if (lowerRepo.includes('llama') || lowerRepo.includes('llm') || lowerRepo.includes('gpt') || lowerRepo.includes('vllm') || lowerRepo.includes('transformer')) {
     detectedType = 'llm';
     modelName = '4-bit Quantized LLM (ARM64)';
   } else if (lowerRepo.includes('wildlife') || lowerRepo.includes('sparrow') || lowerRepo.includes('megadetector') || lowerRepo.includes('cameratrap')) {
@@ -103,8 +176,10 @@ export async function fetchGitHubRepoDetails(url: string): Promise<{
     modelName = 'Dense Matrix & Tensor Stress';
   }
 
-  // If no remote Dockerfile was found, synthesize a high-performance multi-arch edge Dockerfile
-  const generatedDockerfile = remoteDockerfile || `# Auto-generated optimized Edge Dockerfile for ${owner}/${repo}
+  // If no remote Dockerfile was found, synthesize a secure, multi-arch edge Dockerfile
+  // Using strictly sanitized URLs and avoiding shell injection
+  const generatedDockerfile = remoteDockerfile || `# Optimized Multi-Arch Edge Dockerfile
+# Repository: ${safeOwner}/${safeRepo}
 FROM nvcr.io/nvidia/l4t-pytorch:r36.2.0-pth2.1-py3
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -116,7 +191,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \\
     git curl build-essential libgl1-mesa-glx libglib2.0-0 \\
     && rm -rf /var/lib/apt/lists/*
 
-RUN git clone --depth 1 ${cleanUrl} .
+# Clone repository via validated canonical URL
+RUN git clone --depth 1 ${canonicalCloneUrl} .
 
 # Install dependencies if requirements.txt exists
 RUN if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.txt; fi
@@ -129,9 +205,9 @@ ENTRYPOINT ["python3", "main.py"]`;
 
   const generatedCompose = `version: '3.8'
 services:
-  ${repo.toLowerCase()}:
+  ${safeServiceName}:
     build: .
-    image: ${repo.toLowerCase()}:latest
+    image: ${safeServiceName}:latest
     runtime: nvidia
     restart: unless-stopped
     devices:
@@ -144,20 +220,20 @@ services:
 
   return {
     repoInfo: {
-      name: repo,
-      fullName: `${owner}/${repo}`,
-      description: `Edge-ready containerization for ${owner}/${repo} repository.`,
-      stars: 1200,
-      forks: 340,
-      defaultBranch: 'main',
+      name: safeRepo,
+      fullName: `${safeOwner}/${safeRepo}`,
+      description: apiDescription,
+      stars: apiStars,
+      forks: apiForks,
+      defaultBranch,
       hasDockerfile: Boolean(remoteDockerfile),
       detectedType,
     },
     dockerfile: generatedDockerfile,
     dockerCompose: generatedCompose,
     suggestedConfig: {
-      repoUrl: cleanUrl,
-      branch: 'main',
+      repoUrl: canonicalUrl,
+      branch: defaultBranch,
       workload: {
         type: detectedType,
         modelName,
