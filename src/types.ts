@@ -150,3 +150,46 @@ export interface DeviceSimulationState {
   uptimeSeconds: number;
   benchmarkScore: number;
 }
+
+export type NotebookCellType = 'code' | 'markdown';
+
+export interface NotebookCellOutput {
+  id: string;
+  type: 'text' | 'stream' | 'error' | 'table' | 'plot';
+  content: string;
+  executionTimeMs?: number;
+  tableData?: {
+    headers: string[];
+    rows: (string | number)[][];
+  };
+  plotType?: 'latency' | 'throughput' | 'spectrogram' | 'detection';
+}
+
+export interface NotebookCell {
+  id: string;
+  type: NotebookCellType;
+  source: string;
+  executionCount: number | null;
+  isExecuting?: boolean;
+  outputs: NotebookCellOutput[];
+}
+
+export interface NotebookDocument {
+  id: string;
+  title: string;
+  description: string;
+  targetHardware: DeviceId;
+  kernelName: string;
+  cells: NotebookCell[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  timestamp: number;
+  suggestedCode?: string;
+  model?: string;
+}

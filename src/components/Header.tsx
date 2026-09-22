@@ -1,9 +1,9 @@
 import React from 'react';
-import { Cpu, Play, Square, RefreshCw, Zap, Layers, BarChart3, CircuitBoard, Flame, BookOpen } from 'lucide-react';
+import { Cpu, Play, Square, RefreshCw, Zap, Layers, BarChart3, CircuitBoard, Flame, BookOpen, FileCode } from 'lucide-react';
 
 interface HeaderProps {
-  viewMode: 'tri-screen' | 'comparison' | 'hardware' | 'docs';
-  setViewMode: (mode: 'tri-screen' | 'comparison' | 'hardware' | 'docs') => void;
+  viewMode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook';
+  setViewMode: (mode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook') => void;
   onDeployAll: () => void;
   onStopAll: () => void;
   onResetAll: () => void;
@@ -101,6 +101,18 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
             Docs & GitHub
+          </button>
+          <button
+            id="view-notebook"
+            onClick={() => setViewMode('notebook')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${
+              viewMode === 'notebook'
+                ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-sm font-semibold'
+                : 'text-amber-300/80 hover:text-amber-200 hover:bg-slate-800'
+            }`}
+          >
+            <FileCode className="w-3.5 h-3.5 text-amber-400" />
+            Jupyter & Gemini AI
           </button>
         </div>
 
