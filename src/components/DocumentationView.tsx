@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { 
   BookOpen, FileText, Cpu, Leaf, Terminal, Copy, Check, ExternalLink, 
-  Layers, Shield, Zap, Sparkles, Download, GitBranch 
+  Layers, Shield, Zap, Sparkles, Download, GitBranch, Cloud 
 } from 'lucide-react';
 
-type DocSection = 'readme' | 'hardware' | 'wildlife' | 'nvidia-workshops' | 'docker';
+type DocSection = 'readme' | 'hardware' | 'wildlife' | 'nvidia-workshops' | 'docker' | 'render';
 
 export const DocumentationView: React.FC = () => {
   const [activeSection, setActiveSection] = useState<DocSection>('readme');
@@ -97,6 +97,17 @@ export const DocumentationView: React.FC = () => {
           >
             <Terminal className="w-3.5 h-3.5" />
             Edge Docker Deployment Best Practices
+          </button>
+          <button
+            onClick={() => setActiveSection('render')}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 ${
+              activeSection === 'render'
+                ? 'bg-cyan-950/80 border border-cyan-400 text-cyan-200 shadow-sm'
+                : 'bg-slate-950 border border-slate-800 text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Cloud className="w-3.5 h-3.5" />
+            Deploy on Render & Cloud
           </button>
         </div>
       </div>
@@ -405,6 +416,153 @@ export const DocumentationView: React.FC = () => {
                   Continuous logging and video caching will degrade MicroSD cards rapidly. Mount temporary directories to RAM using <code className="text-cyan-400">--tmpfs /tmp --tmpfs /var/log</code>, or mount high-endurance NVMe SSDs into <code className="text-cyan-400">/mnt/nvme</code>.
                 </p>
               </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'render' && (
+          <div className="space-y-6">
+            <div className="border-b border-slate-800 pb-4">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 text-xs font-semibold rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+                  Render Blueprint Ready
+                </span>
+                <span className="px-2 py-0.5 text-xs font-semibold rounded bg-emerald-950 text-emerald-300 border border-emerald-800">
+                  Free Tier (Static Site)
+                </span>
+              </div>
+              <h3 className="text-xl font-bold text-white mt-2">Deploying EdgeDocker Sim on Render</h3>
+              <p className="text-sm text-slate-400 mt-1">
+                Render hosts Vite/React single-page applications on a global, ultra-fast Content Delivery Network with zero configuration, automatic SSL, and zero monthly cost.
+              </p>
+            </div>
+
+            {/* Quick 1-Click Blueprint Card */}
+            <div className="bg-gradient-to-br from-cyan-950/40 via-slate-950 to-indigo-950/40 p-5 rounded-xl border border-cyan-500/30">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h4 className="text-base font-bold text-white flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-cyan-400" />
+                    Option 1: Infrastructure as Code (render.yaml Blueprint)
+                  </h4>
+                  <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                    This repository includes an official <code className="text-cyan-400">render.yaml</code> file. Render automatically configures build scripts, output directories, security headers, and SPA rewrite rules when you import the repository.
+                  </p>
+                </div>
+                <button
+                  onClick={() => copyToClipboard(`services:
+  - type: web
+    name: edgedocker-sim
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: true
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN`, 'yaml')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-900/60 border border-cyan-700 text-cyan-200 text-xs font-medium hover:bg-cyan-800/80 transition-colors shrink-0"
+                >
+                  {copiedCode === 'yaml' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedCode === 'yaml' ? 'Copied' : 'Copy render.yaml'}
+                </button>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
+                <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
+                  <span className="text-slate-400 block text-[11px]">Service Type</span>
+                  <span className="font-mono text-cyan-300 font-bold">Static Site</span>
+                </div>
+                <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
+                  <span className="text-slate-400 block text-[11px]">Build Command</span>
+                  <span className="font-mono text-cyan-300 font-bold">npm i && npm run build</span>
+                </div>
+                <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
+                  <span className="text-slate-400 block text-[11px]">Publish Dir</span>
+                  <span className="font-mono text-cyan-300 font-bold">./dist</span>
+                </div>
+                <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
+                  <span className="text-slate-400 block text-[11px]">SPA Rewrite</span>
+                  <span className="font-mono text-cyan-300 font-bold">/* &rarr; /index.html</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Step by Step instructions */}
+            <div className="space-y-4">
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider text-slate-200">
+                Step-by-Step Deployment Steps
+              </h4>
+
+              <div className="space-y-3 text-xs">
+                <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 flex items-start gap-3">
+                  <span className="w-6 h-6 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 flex items-center justify-center font-bold shrink-0">
+                    1
+                  </span>
+                  <div>
+                    <h5 className="font-bold text-white">Push to GitHub or GitLab</h5>
+                    <p className="text-slate-400 mt-0.5">
+                      Ensure your repository is pushed with the included <code className="text-slate-300">render.yaml</code>, <code className="text-slate-300">package.json</code>, and <code className="text-slate-300">vite.config.ts</code>.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 flex items-start gap-3">
+                  <span className="w-6 h-6 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 flex items-center justify-center font-bold shrink-0">
+                    2
+                  </span>
+                  <div>
+                    <h5 className="font-bold text-white">Connect to Render</h5>
+                    <p className="text-slate-400 mt-0.5">
+                      Log into <a href="https://dashboard.render.com" target="_blank" rel="noreferrer" className="text-cyan-400 underline">dashboard.render.com</a>. Click <strong>New +</strong> &rarr; <strong>Blueprint</strong> (or <strong>Static Site</strong>).
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 flex items-start gap-3">
+                  <span className="w-6 h-6 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 flex items-center justify-center font-bold shrink-0">
+                    3
+                  </span>
+                  <div>
+                    <h5 className="font-bold text-white">Select Repository and Deploy</h5>
+                    <p className="text-slate-400 mt-0.5">
+                      Render will instantly validate the configuration, run the Vite build, run tests, and generate your live production URL (e.g. <code className="text-cyan-300">https://edgedocker-sim.onrender.com</code>).
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* render.yaml preview snippet */}
+            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-mono text-cyan-400">render.yaml (Root Configuration)</span>
+                <span className="text-[11px] text-slate-500">Infrastructure as Code</span>
+              </div>
+              <pre className="bg-slate-900 p-3 rounded-lg text-xs font-mono text-slate-300 overflow-x-auto">
+{`services:
+  - type: web
+    name: edgedocker-sim
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: true
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff`}
+              </pre>
             </div>
           </div>
         )}

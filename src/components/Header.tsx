@@ -42,9 +42,12 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
                 ARM64 Tri-Cluster
               </span>
+              <span className="hidden sm:inline-flex px-2 py-0.5 text-[10px] font-mono rounded bg-slate-800/90 text-slate-300 border border-slate-700">
+                Silicon Telemetry Simulator
+              </span>
             </div>
             <p className="text-xs text-slate-400">
-              Jetson Orin Nano (40 TOPS) • Raspberry Pi 5 (ARM64) • Thor Nano (250 TOPS)
+              Simulating Jetson Orin Nano (40 TOPS) • Raspberry Pi 5 (ARM64) • Thor Nano (250 TOPS)
             </p>
           </div>
         </div>

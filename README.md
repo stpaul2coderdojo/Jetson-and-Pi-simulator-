@@ -3,6 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-ARM64%20%7C%20CUDA-emerald.svg)](#hardware-comparison)
 [![Devices](https://img.shields.io/badge/Targets-Jetson%20Orin%20Nano%20%7C%20Pi%205%20%7C%20Thor%20Nano-cyan.svg)](#hardware-comparison)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
 [![Docker](https://img.shields.io/badge/Docker-Multi--Arch%20Edge-blue.svg)](#docker-architecture)
 [![Wildlife AI](https://img.shields.io/badge/Specialty-Wildlife%20AI%20%26%20NVIDIA%20DLI-green.svg)](#curated-workloads)
 
@@ -25,6 +26,9 @@
 - [Real Hardware Deployment Guide](#real-hardware-deployment-guide)
   - [Deploying to NVIDIA Jetson (Orin Nano / Thor)](#deploying-to-nvidia-jetson)
   - [Deploying to Raspberry Pi 5](#deploying-to-raspberry-pi-5)
+- [Cloud Deployment (Render & GitHub Pages)](#cloud-deployment-render--github-pages)
+  - [Deploy on Render](#deploy-on-render)
+  - [Deploy on GitHub Pages](#deploy-on-github-pages)
 - [Local Development & Building](#local-development--building)
 - [Documentation Index](#documentation-index)
 
@@ -175,6 +179,42 @@ Every preset in EdgeDocker Sim includes production-ready Docker configurations. 
 
 ---
 
+## Cloud Deployment (Render & GitHub Pages)
+
+### Deploy on Render
+
+EdgeDocker Sim is pre-configured for instant static site deployment on **[Render](https://render.com)** with zero cost on Render's Free Tier, automated global CDN, and SSL certificates.
+
+#### Method A: 1-Click Blueprint (Recommended)
+This repository includes a native `render.yaml` Blueprint file:
+1. Push your code to GitHub or GitLab.
+2. Navigate to the [Render Dashboard](https://dashboard.render.com).
+3. Click **New +** &rarr; **Blueprint** and select your repository.
+4. Render automatically reads `render.yaml`, configures the build (`npm install && npm run build`), sets publish directory to `./dist`, and configures SPA rewrite rules.
+5. Click **Apply** to deploy.
+
+#### Method B: Manual Static Site on Render
+1. Click **New +** &rarr; **Static Site**.
+2. Connect your Git repository.
+3. Set **Build Command**: `npm install && npm run build`
+4. Set **Publish Directory**: `dist`
+5. Under **Redirects/Rewrites**, add:
+   - Type: `Rewrite`
+   - Source: `/*`
+   - Destination: `/index.html`
+6. Click **Create Static Site**.
+
+*For full instructions, read [docs/RENDER_DEPLOYMENT.md](docs/RENDER_DEPLOYMENT.md).*
+
+### Deploy on GitHub Pages
+
+The repository includes a ready-to-run GitHub Actions workflow in `.github/workflows/deploy.yml` and relative base resolution (`base: './'`) in `vite.config.ts`:
+1. In your GitHub repository, go to **Settings** &rarr; **Pages**.
+2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+3. Pushes to `main` will automatically build, test, and deploy to `https://<username>.github.io/<repo>/`.
+
+---
+
 ## Local Development & Building
 
 This repository is built using **React 19, TypeScript, Vite, and Tailwind CSS**.
@@ -213,6 +253,7 @@ For deeper guides and technical specifications, explore the `/docs` directory:
 - [Wildlife AI & Passive Acoustic Monitoring Guide](docs/WILDLIFE_AI_GUIDE.md)
 - [NVIDIA Jetson & DLI Workshops Guide](docs/NVIDIA_WORKSHOPS_GUIDE.md)
 - [Edge Docker & Container Best Practices](docs/DOCKER_EDGE_DEPLOYMENT.md)
+- [Render Cloud Deployment Guide](docs/RENDER_DEPLOYMENT.md)
 
 ---
 

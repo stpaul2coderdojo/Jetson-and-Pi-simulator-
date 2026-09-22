@@ -406,28 +406,51 @@ export class DeviceSimulator {
     }
 
     // Thermal simulation physics
-    // Power generates heat: Delta T ~ (Power - Cooling)
-    const coolingEfficiency = spec.thermals.hasActiveFan ? 0.35 : 0.15;
-    const tempDelta = (powerTargetWatts * 0.45) - ((this.currentTemp - spec.thermals.ambientC) * coolingEfficiency);
-    this.currentTemp = Math.max(spec.thermals.idleTempC, this.currentTemp + tempDelta * 0.15 + (Math.random() - 0.5) * 0.3);
+    // Normal operation stabilizes at safe operating temperatures (52°C - 65°C)
+    // Stress mode progressively builds thermal saturation and triggers throttling well within 30-50 ticks
+    if (isStress) {
+      // Under heavy synthetic stress, thermal target exceeds cooling dissipation capacity
+      const stressTargetTemp = spec.thermals.throttleTempC + (this.isThrottling ? 2.0 : 6.0);
+      const delta = (stressTargetTemp - this.currentTemp) * 0.08 + 0.35;
+      this.currentTemp = Math.min(spec.thermals.maxSafeTempC + 1.0, this.currentTemp + delta + (Math.random() - 0.5) * 0.15);
+      
+      // Check if threshold crossed
+      if (this.currentTemp >= spec.thermals.throttleTempC) {
+        this.isThrottling = true;
+      }
+    } else {
+      // Normal operating temperature target based on wattage and active cooling
+      const normalTargetTemp = spec.thermals.idleTempC + 
+        (powerTargetWatts / spec.power.maxWatts) * (spec.thermals.throttleTempC - spec.thermals.idleTempC - 18);
+      
+      const coolingRate = 0.055;
+      this.currentTemp = Math.max(spec.thermals.idleTempC, this.currentTemp + (normalTargetTemp - this.currentTemp) * coolingRate + (Math.random() - 0.5) * 0.2);
+      
+      // Hysteresis: clear throttling only when cooled 2°C below throttle threshold
+      if (this.currentTemp < spec.thermals.throttleTempC - 2.0) {
+        this.isThrottling = false;
+      }
+    }
 
-    // Thermal throttling check
-    this.isThrottling = this.currentTemp >= spec.thermals.throttleTempC;
-    const throttlePenalty = this.isThrottling ? 0.65 : 1.0;
+    // Thermal throttling penalty: DVFS drops clocks, cutting FPS and increasing latency
+    const throttlePenalty = this.isThrottling ? 0.55 : 1.0;
 
     // Calculate actual FPS & Latency
     this.currentFps = Math.max(0.1, Number(((targetFps * precisionMultiplier * throttlePenalty) + (Math.random() - 0.5) * 2).toFixed(1)));
     this.currentLatency = Math.max(0.5, Number(((targetLatency / (precisionMultiplier * throttlePenalty)) + (Math.random() - 0.5) * 0.3).toFixed(1)));
     this.totalFrames += Math.round(this.currentFps);
 
-    // Power draw dynamic
-    this.currentPower = Math.min(spec.power.maxWatts, Math.max(spec.power.idleWatts, Number((powerTargetWatts + (Math.random() - 0.5) * 0.5).toFixed(1))));
+    // Power draw dynamic (throttling causes DVFS to slightly reduce power overshoot)
+    const effectivePowerTarget = isStress && this.isThrottling ? powerTargetWatts * 0.94 : powerTargetWatts;
+    this.currentPower = Math.min(spec.power.maxWatts, Math.max(spec.power.idleWatts, Number((effectivePowerTarget + (Math.random() - 0.5) * 0.4).toFixed(1))));
 
     // Fan RPM calculation
     let fanRpm = 0;
     if (spec.thermals.hasActiveFan) {
-      if (this.currentTemp > 45) {
-        fanRpm = Math.min(6500, Math.round(2000 + (this.currentTemp - 45) * 110));
+      if (this.isThrottling) {
+        fanRpm = this.deviceId === 'thor-nano' ? 8000 : 6500; // 100% emergency duty cycle
+      } else if (this.currentTemp > 45) {
+        fanRpm = Math.min(6200, Math.round(1800 + (this.currentTemp - 45) * 115));
       } else {
         fanRpm = 1200;
       }
