@@ -46,9 +46,11 @@ export const DeviceSimulatorCard: React.FC<DeviceSimulatorCardProps> = ({
   const isVision = config.workload.type === 'vision';
   const isRobotics = config.workload.type === 'robotics';
   const isAudio = config.workload.type === 'audio';
+  const isWildlife = config.workload.type === 'wildlife';
+  const isBioacoustic = config.workload.type === 'bioacoustic';
 
-  const fpsLabel = isLLM ? 'tok / s' : isRobotics ? 'Hz' : isAudio ? 'x Realtime' : 'FPS';
-  const latencyLabel = isLLM ? 'ms / tok' : 'ms';
+  const fpsLabel = isLLM ? 'tok / s' : isRobotics ? 'Hz' : (isAudio || isBioacoustic) ? 'x Realtime' : 'FPS';
+  const latencyLabel = isLLM ? 'ms / tok' : (isAudio || isBioacoustic) ? 'ms / chunk' : 'ms';
 
   return (
     <div className="flex flex-col bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg transition-all hover:border-slate-700">

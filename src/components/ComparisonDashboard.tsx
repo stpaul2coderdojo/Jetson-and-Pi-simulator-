@@ -22,7 +22,13 @@ export const ComparisonDashboard: React.FC<ComparisonDashboardProps> = ({
   const devices: DeviceId[] = ['orin-nano', 'pi-5', 'thor-nano'];
 
   const isLLM = config.workload.type === 'llm';
-  const throughputUnit = isLLM ? 'tok/s' : 'FPS';
+  const throughputUnit = isLLM
+    ? 'tok/s'
+    : config.workload.type === 'audio' || config.workload.type === 'bioacoustic'
+    ? 'x Realtime'
+    : config.workload.type === 'robotics'
+    ? 'Hz'
+    : 'FPS';
 
   // Calculate efficiency metrics
   const getFpsPerWatt = (id: DeviceId) => {

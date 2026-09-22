@@ -106,7 +106,7 @@ export interface DockerConfig {
   };
   envVars: Record<string, string>;
   workload: {
-    type: 'vision' | 'llm' | 'audio' | 'robotics' | 'compute-benchmark';
+    type: 'vision' | 'llm' | 'audio' | 'robotics' | 'compute-benchmark' | 'wildlife' | 'bioacoustic';
     modelName: string;
     precision: 'INT8' | 'FP8' | 'FP16' | 'FP32';
     batchSize: number;
@@ -120,7 +120,7 @@ export interface GitHubPreset {
   name: string;
   repoUrl: string;
   branch: string;
-  category: 'Computer Vision' | 'Edge LLM' | 'Speech & Audio' | 'Robotics' | 'Benchmark';
+  category: 'Computer Vision' | 'Edge LLM' | 'Speech & Audio' | 'Robotics' | 'Benchmark' | 'Wildlife AI' | 'NVIDIA Workshop';
   description: string;
   stars: string;
   recommendedPrecision: 'INT8' | 'FP8' | 'FP16' | 'FP32';

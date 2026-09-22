@@ -9,7 +9,7 @@ export interface GitHubRepoInfo {
   forks: number;
   defaultBranch: string;
   hasDockerfile: boolean;
-  detectedType: 'vision' | 'llm' | 'audio' | 'robotics' | 'compute-benchmark';
+  detectedType: DockerConfig['workload']['type'];
 }
 
 export async function fetchGitHubRepoDetails(url: string): Promise<{
@@ -86,6 +86,12 @@ export async function fetchGitHubRepoDetails(url: string): Promise<{
   if (lowerRepo.includes('llama') || lowerRepo.includes('llm') || lowerRepo.includes('gpt') || lowerRepo.includes('vllm')) {
     detectedType = 'llm';
     modelName = '4-bit Quantized LLM (ARM64)';
+  } else if (lowerRepo.includes('wildlife') || lowerRepo.includes('sparrow') || lowerRepo.includes('megadetector') || lowerRepo.includes('cameratrap')) {
+    detectedType = 'wildlife';
+    modelName = 'Edge Wildlife Detector & Taxa Classifier';
+  } else if (lowerRepo.includes('acoustic') || lowerRepo.includes('bioacoustic') || lowerRepo.includes('soundscape') || lowerRepo.includes('audiomoth')) {
+    detectedType = 'bioacoustic';
+    modelName = 'Bioacoustic Event Detection (AED)';
   } else if (lowerRepo.includes('whisper') || lowerRepo.includes('audio') || lowerRepo.includes('speech') || lowerRepo.includes('tts')) {
     detectedType = 'audio';
     modelName = 'Whisper Speech Encoder';

@@ -241,6 +241,22 @@ export class DeviceSimulator {
         targetLatency = 8.2;
         memoryBaseMb = 3100;
         powerTargetWatts = 12.1;
+      } else if (workload.type === 'wildlife') {
+        targetCpu = isStress ? 72 : 40;
+        targetGpu = isStress ? 94 : 80;
+        targetTensor = isStress ? 96 : 85;
+        targetFps = 58;
+        targetLatency = 17.2;
+        memoryBaseMb = 2650;
+        powerTargetWatts = isStress ? 14.2 : 11.5;
+      } else if (workload.type === 'bioacoustic') {
+        targetCpu = 28;
+        targetGpu = 45;
+        targetTensor = 50;
+        targetFps = 18.4; // x real-time
+        targetLatency = 16.3;
+        memoryBaseMb = 1750;
+        powerTargetWatts = 7.8;
       } else {
         // compute-benchmark
         targetCpu = 78;
@@ -285,6 +301,22 @@ export class DeviceSimulator {
         targetLatency = 34;
         memoryBaseMb = 2100;
         powerTargetWatts = 8.9;
+      } else if (workload.type === 'wildlife') {
+        targetCpu = isStress ? 98 : 86;
+        targetGpu = 0;
+        targetTensor = 0;
+        targetFps = 8.5;
+        targetLatency = 118;
+        memoryBaseMb = 1920;
+        powerTargetWatts = isStress ? 11.5 : 8.6;
+      } else if (workload.type === 'bioacoustic') {
+        targetCpu = 56;
+        targetGpu = 0;
+        targetTensor = 0;
+        targetFps = 4.8;
+        targetLatency = 62.5;
+        memoryBaseMb = 1350;
+        powerTargetWatts = 5.4;
       } else {
         // compute-benchmark
         targetCpu = 100;
@@ -329,6 +361,22 @@ export class DeviceSimulator {
         targetLatency = 2.1;
         memoryBaseMb = 4300;
         powerTargetWatts = 19.5;
+      } else if (workload.type === 'wildlife') {
+        targetCpu = isStress ? 42 : 20;
+        targetGpu = isStress ? 85 : 62;
+        targetTensor = isStress ? 92 : 75;
+        targetFps = 195;
+        targetLatency = 5.1;
+        memoryBaseMb = 3450;
+        powerTargetWatts = isStress ? 27.5 : 18.2;
+      } else if (workload.type === 'bioacoustic') {
+        targetCpu = 12;
+        targetGpu = 32;
+        targetTensor = 36;
+        targetFps = 65; // 65x real-time
+        targetLatency = 3.1;
+        memoryBaseMb = 2150;
+        powerTargetWatts = 10.5;
       } else {
         // compute-benchmark
         targetCpu = 50;
@@ -473,6 +521,38 @@ export class DeviceSimulator {
         timestamp,
         type: 'inference',
         message: `[NAV2] Costmap raycast ok (1842 points) | Twist cmd_vel: [vx: 0.45m/s, wz: 0.08rad/s] | Loop: ${telemetry.fps} Hz`,
+        level: 'info',
+      };
+    } else if (workload.type === 'wildlife') {
+      const wildlifeEvents = [
+        'Animal [conf 0.94, Panthera onca / Jaguar] [bbox: 0.24, 0.31, 0.72, 0.88]',
+        'Animal [conf 0.89, Loxodonta africana / African Elephant] [bbox: 0.12, 0.05, 0.85, 0.92]',
+        'Animal [conf 0.96, Tapirus bairdii / Baird\'s Tapir] [bbox: 0.35, 0.42, 0.68, 0.79]',
+        'Empty frame filtered [conf 0.98 empty] | Trigger saved to conserve storage',
+        'Person detected [conf 0.91, Ranger patrol] [bbox: 0.44, 0.21, 0.58, 0.82]',
+        'SPARROW solar node: telemetry packet queued via Swarm LEO satellite link',
+      ];
+      const event = wildlifeEvents[Math.floor(Math.random() * wildlifeEvents.length)];
+      return {
+        id: `log-wildlife-${Date.now()}`,
+        timestamp,
+        type: 'inference',
+        message: `[WILDLIFE AI] Frame #${telemetry.totalFramesProcessed}: ${event} | Edge Latency: ${telemetry.inferenceLatencyMs}ms (${telemetry.fps} FPS)`,
+        level: event.includes('Empty') ? 'info' : 'success',
+      };
+    } else if (workload.type === 'bioacoustic') {
+      const bioacousticEvents = [
+        'AED 32kHz Mel-Spectrogram: Passer domesticus (House Sparrow) vocalization (conf 0.92, 2.4-5.2 kHz)',
+        'AudioMoth PAM: Chiroptera echolocation burst (conf 0.88, 28.5 kHz ultrasonic call)',
+        'Rainforest acoustic index: BI=7.82, ACI=0.81 (High avian biodiversity score)',
+        'AED 3.0s window: Amphibian chorus (conf 0.95, 1.2-2.1 kHz)',
+      ];
+      const event = bioacousticEvents[Math.floor(Math.random() * bioacousticEvents.length)];
+      return {
+        id: `log-bioacoustic-${Date.now()}`,
+        timestamp,
+        type: 'inference',
+        message: `[BIOACOUSTIC] ${event} | Processing: ${telemetry.fps}x real-time (${telemetry.inferenceLatencyMs}ms)`,
         level: 'info',
       };
     } else {

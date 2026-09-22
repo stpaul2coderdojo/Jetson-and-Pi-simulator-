@@ -1,9 +1,9 @@
 import React from 'react';
-import { Cpu, Play, Square, RefreshCw, Zap, Layers, BarChart3, CircuitBoard, Flame } from 'lucide-react';
+import { Cpu, Play, Square, RefreshCw, Zap, Layers, BarChart3, CircuitBoard, Flame, BookOpen } from 'lucide-react';
 
 interface HeaderProps {
-  viewMode: 'tri-screen' | 'comparison' | 'hardware';
-  setViewMode: (mode: 'tri-screen' | 'comparison' | 'hardware') => void;
+  viewMode: 'tri-screen' | 'comparison' | 'hardware' | 'docs';
+  setViewMode: (mode: 'tri-screen' | 'comparison' | 'hardware' | 'docs') => void;
   onDeployAll: () => void;
   onStopAll: () => void;
   onResetAll: () => void;
@@ -85,7 +85,19 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             <CircuitBoard className="w-3.5 h-3.5" />
-            Hardware Specs & SoC
+            Hardware Specs
+          </button>
+          <button
+            id="view-docs"
+            onClick={() => setViewMode('docs')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${
+              viewMode === 'docs'
+                ? 'bg-cyan-950 text-cyan-300 border border-cyan-700 shadow-sm font-semibold'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
+            Docs & GitHub
           </button>
         </div>
 

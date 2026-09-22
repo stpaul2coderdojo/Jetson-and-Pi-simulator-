@@ -11,6 +11,7 @@ import { DeviceSimulatorCard } from './components/DeviceSimulatorCard';
 import { DeviceDeepDiveModal } from './components/DeviceDeepDiveModal';
 import { ComparisonDashboard } from './components/ComparisonDashboard';
 import { HardwareBoardView } from './components/HardwareBoardView';
+import { DocumentationView } from './components/DocumentationView';
 import { DEVICE_SPECS } from './data/deviceSpecs';
 import { GITHUB_PRESETS } from './data/presets';
 import { DeviceSimulator } from './services/simulationEngine';
@@ -48,8 +49,8 @@ export default function App() {
     },
   });
 
-  // Current view mode: 'tri-screen' | 'comparison' | 'hardware'
-  const [viewMode, setViewMode] = useState<'tri-screen' | 'comparison' | 'hardware'>('tri-screen');
+  // Current view mode: 'tri-screen' | 'comparison' | 'hardware' | 'docs'
+  const [viewMode, setViewMode] = useState<'tri-screen' | 'comparison' | 'hardware' | 'docs'>('tri-screen');
 
   // Modals state
   const [isConfigEditorOpen, setIsConfigEditorOpen] = useState(false);
@@ -453,6 +454,10 @@ export default function App() {
 
         {viewMode === 'hardware' && (
           <HardwareBoardView />
+        )}
+
+        {viewMode === 'docs' && (
+          <DocumentationView />
         )}
       </main>
 
