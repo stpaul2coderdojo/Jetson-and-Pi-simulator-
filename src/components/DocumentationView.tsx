@@ -378,10 +378,112 @@ export const DocumentationView: React.FC = () => {
         {activeSection === 'docker' && (
           <div className="space-y-6">
             <div className="border-b border-slate-800 pb-4">
-              <h3 className="text-xl font-bold text-white">Edge Docker Deployment Best Practices</h3>
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 text-xs font-semibold rounded bg-blue-950 text-blue-300 border border-blue-800">
+                  GitHub Container Registry (GHCR)
+                </span>
+                <span className="px-2 py-0.5 text-xs font-semibold rounded bg-emerald-950 text-emerald-300 border border-emerald-800">
+                  Multi-Arch: ARM64 + AMD64
+                </span>
+              </div>
+              <h3 className="text-xl font-bold text-white mt-2">Docker on GitHub & Edge Deployment Best Practices</h3>
               <p className="text-sm text-slate-400 mt-1">
-                Optimizing container images, shared memory, and storage longevity on embedded ARM64 boards.
+                Optimizing container images, GitHub Container Registry (GHCR) deployment, Docker Compose, and hardware passthrough for embedded ARM64 boards.
               </p>
+            </div>
+
+            {/* GHCR Quickstart Card */}
+            <div className="bg-gradient-to-br from-blue-950/40 via-slate-950 to-indigo-950/40 p-5 rounded-xl border border-blue-500/30">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h4 className="text-base font-bold text-white flex items-center gap-2">
+                    <Terminal className="w-4 h-4 text-blue-400" />
+                    Run from GitHub Container Registry (GHCR)
+                  </h4>
+                  <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                    Deploy EdgeDocker Sim directly on any Linux x86_64, Jetson Orin Nano, or Raspberry Pi 5 without local compilation:
+                  </p>
+                </div>
+                <button
+                  onClick={() => copyToClipboard(`docker run -d \\
+  --name edgedocker-sim \\
+  -p 3000:3000 \\
+  --restart unless-stopped \\
+  ghcr.io/bheemaiah/edgedocker-sim:latest`, 'ghcr')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-900/60 border border-blue-700 text-blue-200 text-xs font-medium hover:bg-blue-800/80 transition-colors shrink-0"
+                >
+                  {copiedCode === 'ghcr' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedCode === 'ghcr' ? 'Copied' : 'Copy Command'}
+                </button>
+              </div>
+
+              <pre className="mt-3 bg-slate-900 p-3 rounded-lg text-xs font-mono text-cyan-300 overflow-x-auto border border-slate-800">
+{`docker run -d \\
+  --name edgedocker-sim \\
+  -p 3000:3000 \\
+  --restart unless-stopped \\
+  ghcr.io/bheemaiah/edgedocker-sim:latest`}
+              </pre>
+            </div>
+
+            {/* Docker Compose Card */}
+            <div className="bg-slate-950 p-5 rounded-xl border border-slate-800">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-amber-400" />
+                    Docker Compose on Edge Hardware
+                  </h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Pre-configured with non-root security, tmpfs log mounts to protect MicroSD wear, and healthcheck:
+                  </p>
+                </div>
+                <button
+                  onClick={() => copyToClipboard(`services:
+  edgedocker-sim:
+    image: ghcr.io/bheemaiah/edgedocker-sim:latest
+    container_name: edgedocker-sim
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3`, 'compose')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 text-xs font-medium hover:bg-slate-700 transition-colors shrink-0"
+                >
+                  {copiedCode === 'compose' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedCode === 'compose' ? 'Copied' : 'Copy compose.yml'}
+                </button>
+              </div>
+
+              <pre className="mt-3 bg-slate-900 p-3 rounded-lg text-xs font-mono text-slate-300 overflow-x-auto border border-slate-800">
+{`# Run with Docker Compose
+docker compose up -d`}
+              </pre>
+            </div>
+
+            {/* Multi-Arch Buildx Card */}
+            <div className="bg-slate-950 p-5 rounded-xl border border-slate-800">
+              <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                <Cpu className="w-4 h-4 text-emerald-400" />
+                Build Multi-Architecture ARM64 & AMD64 Images
+              </h4>
+              <p className="text-xs text-slate-400 mt-1 mb-2">
+                Compile for NVIDIA Jetson, Raspberry Pi 5, and standard x86 servers using Docker Buildx:
+              </p>
+              <pre className="bg-slate-900 p-3 rounded-lg text-xs font-mono text-emerald-300 overflow-x-auto border border-slate-800">
+{`docker buildx build \\
+  --platform linux/amd64,linux/arm64 \\
+  -t ghcr.io/bheemaiah/edgedocker-sim:latest \\
+  --push .`}
+              </pre>
             </div>
 
             <div className="space-y-4">
@@ -495,7 +597,7 @@ export const DocumentationView: React.FC = () => {
             {/* Step by Step instructions */}
             <div className="space-y-4">
               <h4 className="text-sm font-bold text-white uppercase tracking-wider text-slate-200">
-                Step-by-Step Deployment Steps
+                Step-by-Step Initial Deployment
               </h4>
 
               <div className="space-y-3 text-xs">
@@ -533,6 +635,55 @@ export const DocumentationView: React.FC = () => {
                       Render will instantly validate the configuration, run the Vite build, run tests, and generate your live production URL (e.g. <code className="text-cyan-300">https://edgedocker-sim.onrender.com</code>).
                     </p>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* How to Redeploy on Render */}
+            <div className="space-y-4 pt-2">
+              <h4 className="text-sm font-bold text-white uppercase tracking-wider text-cyan-300 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-cyan-400" />
+                How to Trigger a Redeploy on Render
+              </h4>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[11px] font-mono text-cyan-400 block mb-1 font-bold">METHOD 1</span>
+                    <h5 className="font-bold text-white">Git Push (Auto)</h5>
+                    <p className="text-slate-400 mt-1">
+                      Render automatically listens to your GitHub repository. Any push to <code className="text-slate-300">main</code> automatically kicks off a fresh deployment pipeline.
+                    </p>
+                  </div>
+                  <pre className="mt-3 bg-slate-900 p-2 rounded text-[11px] font-mono text-slate-300">git push origin main</pre>
+                </div>
+
+                <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[11px] font-mono text-amber-400 block mb-1 font-bold">METHOD 2</span>
+                    <h5 className="font-bold text-white">Manual Dashboard Redeploy</h5>
+                    <p className="text-slate-400 mt-1">
+                      In Render Dashboard &rarr; select <strong>edgedocker-sim</strong> &rarr; click <strong>Manual Deploy</strong> &rarr; choose <strong>Clear build cache & deploy</strong>.
+                    </p>
+                  </div>
+                  <span className="mt-3 text-[11px] text-amber-300/80 italic font-mono block">Recommended for clean cache</span>
+                </div>
+
+                <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span className="text-[11px] font-mono text-indigo-400 block mb-1 font-bold">METHOD 3</span>
+                    <h5 className="font-bold text-white">Deploy Webhook (API)</h5>
+                    <p className="text-slate-400 mt-1">
+                      Trigger instant deployment from CI/CD, GitHub Actions, or terminal using your Render Deploy Hook.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => copyToClipboard('curl -X POST "https://api.render.com/deploy/srv-YOUR_SERVICE_ID?key=YOUR_KEY"', 'curl-hook')}
+                    className="mt-3 flex items-center justify-between gap-1 px-2.5 py-1.5 rounded bg-slate-900 text-indigo-300 font-mono text-[10px] border border-slate-800 hover:border-indigo-700 transition-colors"
+                  >
+                    <span>curl -X POST "https://api.render.com/..."</span>
+                    {copiedCode === 'curl-hook' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-slate-400" />}
+                  </button>
                 </div>
               </div>
             </div>

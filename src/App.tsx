@@ -17,6 +17,7 @@ import { GITHUB_PRESETS } from './data/presets';
 import { DeviceSimulator } from './services/simulationEngine';
 import { fetchGitHubRepoDetails } from './services/githubService';
 import { JupyterNotebookIDE } from './components/NotebookIDE/JupyterNotebookIDE';
+import { ToolsView } from './components/ToolsView';
 import { 
   DeviceId, DeviceSimulationState, DockerConfig, GitHubPreset, TelemetryData 
 } from './types';
@@ -50,8 +51,8 @@ export default function App() {
     },
   });
 
-  // Current view mode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook'
-  const [viewMode, setViewMode] = useState<'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook'>('tri-screen');
+  // Current view mode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook' | 'tools'
+  const [viewMode, setViewMode] = useState<'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook' | 'tools'>('tri-screen');
 
   // Modals state
   const [isConfigEditorOpen, setIsConfigEditorOpen] = useState(false);
@@ -415,8 +416,8 @@ export default function App() {
 
       {/* Main Container Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 space-y-6">
-        {/* GitHub Repository & Preset Bar (hidden in notebook mode) */}
-        {viewMode !== 'notebook' && (
+        {/* GitHub Repository & Preset Bar (hidden in notebook and tools modes) */}
+        {viewMode !== 'notebook' && viewMode !== 'tools' && (
           <RepoSelector
             currentConfig={config}
             onSelectPreset={handleSelectPreset}
@@ -465,6 +466,10 @@ export default function App() {
 
         {viewMode === 'notebook' && (
           <JupyterNotebookIDE />
+        )}
+
+        {viewMode === 'tools' && (
+          <ToolsView />
         )}
       </main>
 

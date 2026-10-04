@@ -1,9 +1,9 @@
 import React from 'react';
-import { Cpu, Play, Square, RefreshCw, Zap, Layers, BarChart3, CircuitBoard, Flame, BookOpen, FileCode } from 'lucide-react';
+import { Cpu, Play, Square, RefreshCw, Zap, Layers, BarChart3, CircuitBoard, Flame, BookOpen, FileCode, PenTool } from 'lucide-react';
 
 interface HeaderProps {
-  viewMode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook';
-  setViewMode: (mode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook') => void;
+  viewMode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook' | 'tools';
+  setViewMode: (mode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook' | 'tools') => void;
   onDeployAll: () => void;
   onStopAll: () => void;
   onResetAll: () => void;
@@ -105,14 +105,26 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             id="view-notebook"
             onClick={() => setViewMode('notebook')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all whitespace-nowrap ${
               viewMode === 'notebook'
                 ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-sm font-semibold'
                 : 'text-amber-300/80 hover:text-amber-200 hover:bg-slate-800'
             }`}
           >
             <FileCode className="w-3.5 h-3.5 text-amber-400" />
-            Jupyter & Gemini AI
+            Jupyter &amp; Gemini AI
+          </button>
+          <button
+            id="view-tools"
+            onClick={() => setViewMode('tools')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all whitespace-nowrap ${
+              viewMode === 'tools'
+                ? 'bg-cyan-950 text-cyan-300 border border-cyan-700 shadow-sm font-semibold'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+          >
+            <PenTool className="w-3.5 h-3.5 text-cyan-400" />
+            Tools
           </button>
         </div>
 

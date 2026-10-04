@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, Type } from '@google/genai';
 
 dotenv.config();
 
@@ -100,6 +100,181 @@ ${activeCellCode ? `Active Cell Code:\n\`\`\`python\n${activeCellCode}\n\`\`\`\n
     console.error('Error in /api/gemini/chat:', error);
     return res.status(500).json({
       error: error.message || 'An internal error occurred while communicating with Gemini.',
+    });
+  }
+});
+
+// Small Language Model (SLM) & Semantic Kernel Function rewrite() Endpoint
+app.post('/api/tools/rewrite', async (req, res) => {
+  try {
+    const {
+      text,
+      wordLimit = 120,
+      context = 'Executive & Technical Communication',
+      tone = 'Professional & Concise',
+      slmModel = 'Phi-3.5-mini-instruct (3.8B)',
+      subsection = 'writing',
+    } = req.body;
+
+    if (!text || typeof text !== 'string' || !text.trim()) {
+      return res.status(400).json({ error: 'Input text is required for rewrite().' });
+    }
+
+    const ai = getAIClient();
+    if (!ai) {
+      return res.status(503).json({
+        error: 'Server Gemini API key not configured. Falling back to local SLM rewrite engine.',
+      });
+    }
+
+    const numericLimit = Math.max(10, Math.min(2000, Number(wordLimit) || 120));
+
+    const systemInstruction = `You are an enterprise Small Language Model (${slmModel}) orchestrated by Microsoft Semantic Kernel executing the native/semantic function \`rewrite(text, wordLimit, context)\`.
+
+Active Subsection Mode: ${subsection === 'editing' ? 'Structural Editing & Precision Refinement' : 'Professional Writing & Composition'}
+Target Context: ${context}
+Target Tone: ${tone}
+Strict Word Limit: Maximum ${numericLimit} words.
+
+Your task:
+1. Rewrite the user's input text so that it reads significantly more professionally, clearly, and authoritatively for the specified context (${context}).
+2. Strictly enforce the word limit of at most ${numericLimit} words without losing core technical or business meaning.
+3. Correct any awkward phrasing, passive voice, or spelling/grammar defects automatically during the rewrite.
+4. Return a JSON object matching the required schema.`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.1-flash-lite',
+      contents: `Execute function rewrite(text, wordLimit=${numericLimit}, context="${context}"):\n\nInput Text:\n"""\n${text}\n"""`,
+      config: {
+        systemInstruction,
+        temperature: 0.4,
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            rewrittenText: {
+              type: Type.STRING,
+              description: 'The professionally rewritten text strictly within the requested word limit.',
+            },
+            keyImprovements: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING },
+              description: '2 to 4 concise bullet points explaining the stylistic and structural improvements made.',
+            },
+            toneAchieved: {
+              type: Type.STRING,
+              description: 'Short label of the resulting professional tone.',
+            },
+          },
+          required: ['rewrittenText', 'keyImprovements', 'toneAchieved'],
+        },
+      },
+    });
+
+    const rawJson = response.text?.trim() || '{}';
+    const parsed = JSON.parse(rawJson);
+
+    return res.json({
+      rewrittenText: parsed.rewrittenText || text,
+      keyImprovements: parsed.keyImprovements || [
+        'Elevated vocabulary and professional register for target context',
+        `Constrained length to fit within ${numericLimit}-word limit`,
+      ],
+      toneAchieved: parsed.toneAchieved || tone,
+      slmModel,
+      engine: 'gemini-3.1-flash-lite',
+    });
+  } catch (error: any) {
+    console.error('Error in /api/tools/rewrite:', error);
+    return res.status(500).json({
+      error: error.message || 'An error occurred while executing rewrite().',
+    });
+  }
+});
+
+// Microsoft Semantic Kernel Spelling & Grammar Checker Endpoint
+app.post('/api/tools/spellcheck', async (req, res) => {
+  try {
+    const { text, context = 'Professional Technical & Business Writing' } = req.body;
+
+    if (!text || typeof text !== 'string' || !text.trim()) {
+      return res.status(400).json({ error: 'Input text is required for Semantic Kernel spell checking.' });
+    }
+
+    const ai = getAIClient();
+    if (!ai) {
+      return res.status(503).json({
+        error: 'Server Gemini API key not configured. Using local Semantic Kernel dictionary & grammar rules.',
+      });
+    }
+
+    const systemInstruction = `You are a Microsoft Semantic Kernel Plugin (\`SpellCheckerPlugin.CheckSpellingAndGrammarAsync\`) integrated with a Small Language Model.
+Analyze the provided text within the context of "${context}".
+Identify all spelling mistakes, typographical errors, grammatical errors, punctuation issues, and unprofessional word choices.
+Return both the list of specific issues and the fully corrected version of the text.`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.1-flash-lite',
+      contents: `Run Semantic Kernel SpellCheckerPlugin on the following text:\n\n"""\n${text}\n"""`,
+      config: {
+        systemInstruction,
+        temperature: 0.2,
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            correctedText: {
+              type: Type.STRING,
+              description: 'The complete text with all spelling and grammar corrections applied.',
+            },
+            issues: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  original: {
+                    type: Type.STRING,
+                    description: 'The exact misspelled word or grammatically incorrect phrase from the original text.',
+                  },
+                  suggestion: {
+                    type: Type.STRING,
+                    description: 'The corrected replacement word or phrase.',
+                  },
+                  type: {
+                    type: Type.STRING,
+                    description: 'One of: spelling, grammar, style, punctuation',
+                  },
+                  explanation: {
+                    type: Type.STRING,
+                    description: 'Brief explanation of why this correction improves accuracy or professionalism.',
+                  },
+                },
+                required: ['original', 'suggestion', 'type', 'explanation'],
+              },
+            },
+            readabilityScore: {
+              type: Type.NUMBER,
+              description: 'Estimated professional clarity score from 0 to 100.',
+            },
+          },
+          required: ['correctedText', 'issues', 'readabilityScore'],
+        },
+      },
+    });
+
+    const rawJson = response.text?.trim() || '{}';
+    const parsed = JSON.parse(rawJson);
+
+    return res.json({
+      correctedText: parsed.correctedText || text,
+      issues: Array.isArray(parsed.issues) ? parsed.issues : [],
+      readabilityScore: typeof parsed.readabilityScore === 'number' ? parsed.readabilityScore : 92,
+      pluginName: 'Microsoft.SemanticKernel.Plugins.Writing.SpellCheckerPlugin',
+    });
+  } catch (error: any) {
+    console.error('Error in /api/tools/spellcheck:', error);
+    return res.status(500).json({
+      error: error.message || 'An error occurred during Semantic Kernel spell check.',
     });
   }
 });

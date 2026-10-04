@@ -50,6 +50,55 @@ If you prefer to configure the deployment manually in the Render Web Console:
 
 ---
 
+## 🔄 How to Redeploy on Render (3 Fast Methods)
+
+When you update your code (such as adding Jupyter Notebook, Docker configurations, or Gemini AI features), use one of the following methods to redeploy:
+
+### Method 1: Automatic Continuous Redeployment (Recommended)
+Render is directly connected to your GitHub repository:
+1. Commit and push your latest code to your connected GitHub branch:
+   ```bash
+   git add .
+   git commit -m "Update Docker, Jupyter IDE, and Gemini AI"
+   git push origin main
+   ```
+2. Render detects the push and immediately starts an automated build and atomic redeployment.
+
+### Method 2: Manual Redeploy from the Render Dashboard
+If you want to trigger a redeploy immediately or refresh after changing build settings:
+1. Go to the [Render Dashboard](https://dashboard.render.com).
+2. Select your service: **`edgedocker-sim`**.
+3. In the top-right corner, click **Manual Deploy** &rarr; **Clear build cache & deploy**.
+   *(Clearing the build cache ensures new dependencies and Vite plugins are compiled cleanly).*
+4. Monitor the live build log. Once complete, your site will be live immediately.
+
+### Method 3: Trigger Instant Redeployment via Deploy Hook (API / Webhook)
+You can trigger redeployments programmatically from terminal, CI/CD, or GitHub Actions:
+1. In Render Dashboard, go to **Settings** &rarr; scroll to **Deploy Hook**.
+2. Copy your unique URL (format: `https://api.render.com/deploy/srv-xxxxxx?key=yyyyyy`).
+3. Trigger an instant redeployment with a simple `curl` POST:
+   ```bash
+   curl -X POST "https://api.render.com/deploy/srv-xxxxxx?key=yyyyyy"
+   ```
+
+---
+
+## Option 3: Full-Stack Docker or Node Web Service on Render
+
+If you prefer to run EdgeDocker Sim as a full-stack containerized service with active server-side `/api/health` and `/api/gemini/chat` proxying:
+
+1. In Render Dashboard, click **New +** &rarr; **Web Service**.
+2. Connect your repository and select **Docker** as the environment (or **Node**).
+3. If using Docker: Render automatically detects the root `Dockerfile` and builds the multi-stage image.
+4. Under **Environment Variables**, add:
+   - `NODE_ENV`: `production`
+   - `PORT`: `3000`
+   - `GEMINI_API_KEY`: *(your Google AI Studio API key)*
+5. Set **Health Check Path**: `/api/health`.
+6. Click **Create Web Service**.
+
+---
+
 ## Features on Render
 
 - **Zero Cost:** Runs permanently on Render's generous Free Tier for static sites.

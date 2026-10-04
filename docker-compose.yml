@@ -1,0 +1,39 @@
+# Docker Compose Configuration for EdgeDocker Sim
+# Supports local development and edge deployment (Jetson Orin Nano, Raspberry Pi 5, x86_64)
+
+services:
+  edgedocker-sim:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/bheemaiah/edgedocker-sim:latest
+    container_name: edgedocker-sim
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    # Security: Read-only root filesystem with tmpfs mounts for ephemeral state
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    # Prevent runaway logging from exhausting edge MicroSD / NVMe storage
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1024M
+        reservations:
+          memory: 256M

@@ -3,8 +3,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-ARM64%20%7C%20CUDA-emerald.svg)](#hardware-comparison)
 [![Devices](https://img.shields.io/badge/Targets-Jetson%20Orin%20Nano%20%7C%20Pi%205%20%7C%20Thor%20Nano-cyan.svg)](#hardware-comparison)
+[![Docker Multi-Arch](https://img.shields.io/badge/Docker%20Multi--Arch-ARM64%20%7C%20AMD64-blue.svg?logo=docker)](#docker-on-github-ghcr--multi-arch)
+[![GHCR Container](https://img.shields.io/badge/GHCR-ghcr.io%2Fedgedocker--sim-indigo.svg?logo=github)](https://github.com/features/packages)
+[![Docker CI](https://img.shields.io/badge/CI-Docker%20Buildx%20%26%20GHCR-2ea44f.svg?logo=githubactions)](#github-actions-docker-workflow)
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
-[![Docker](https://img.shields.io/badge/Docker-Multi--Arch%20Edge-blue.svg)](#docker-architecture)
 [![Wildlife AI](https://img.shields.io/badge/Specialty-Wildlife%20AI%20%26%20NVIDIA%20DLI-green.svg)](#curated-workloads)
 
 **EdgeDocker Sim** is an interactive edge computing and container simulation dashboard. It simulates, benchmarks, and analyzes the performance of public GitHub repositories running in Docker containers across three distinct ARM64 edge computing architectures:
@@ -18,6 +20,11 @@
 
 - [Overview & Capabilities](#overview--capabilities)
 - [Target Hardware Comparison](#target-hardware-comparison)
+- [Docker on GitHub (GHCR & Multi-Arch)](#docker-on-github-ghcr--multi-arch)
+  - [Run from GitHub Container Registry](#1-run-from-github-container-registry-ghcr)
+  - [Run with Docker Compose](#2-run-with-docker-compose)
+  - [Multi-Arch Build with Buildx (ARM64 / AMD64)](#3-multi-arch-build-with-docker-buildx)
+  - [GitHub Actions Automated CI/CD Workflow](#4-github-actions-docker-workflow)
 - [Curated GitHub Workloads](#curated-workloads)
   - [Wildlife AI & Biodiversity Conservation](#1-wildlife-ai--biodiversity-conservation)
   - [NVIDIA Workshop & Deep Learning Institute (DLI)](#2-nvidia-workshop--deep-learning-institute-dli)
@@ -59,6 +66,77 @@ EdgeDocker Sim allows engineers, researchers, and students to:
 | **Thermal Limit** | 85°C junction throttle | 80°C package throttle | 90°C thermal envelope |
 | **Price Point** | ~$499 USD | ~$80 USD | ~$899 USD (projected) |
 | **Hardware Video Codec**| Decode: 4K60 (NVDEC) | HEVC 4K60 decode | 8K60 AV1/NVDEC/NVENC |
+
+---
+
+## Docker on GitHub (GHCR & Multi-Arch)
+
+EdgeDocker Sim is containerized with a production multi-stage `Dockerfile` and automated GitHub Actions CI/CD to build and publish dual-architecture images (`linux/amd64` and `linux/arm64`) to the **GitHub Container Registry (`ghcr.io`)**.
+
+### 1. Run from GitHub Container Registry (GHCR)
+
+You can launch EdgeDocker Sim directly on any Linux x86_64, Jetson Orin Nano, or Raspberry Pi 5 without cloning the codebase:
+
+```bash
+# Pull the latest multi-arch image from GitHub Container Registry
+docker pull ghcr.io/bheemaiah/edgedocker-sim:latest
+
+# Run the container
+docker run -d \
+  --name edgedocker-sim \
+  -p 3000:3000 \
+  -e GEMINI_API_KEY="your-optional-gemini-key" \
+  --restart unless-stopped \
+  ghcr.io/bheemaiah/edgedocker-sim:latest
+```
+
+Open `http://localhost:3000` (or `http://<edge-ip>:3000`) in your browser.
+
+### 2. Run with Docker Compose
+
+A production-ready `docker-compose.yml` is included in the repository root:
+
+```bash
+# Clone the repository
+git clone https://github.com/bheemaiah/edgedocker-sim.git
+cd edgedocker-sim
+
+# Launch with Docker Compose
+docker compose up -d
+
+# View real-time container logs & healthcheck
+docker compose logs -f
+```
+
+To configure your optional Gemini API key for the interactive Jupyter AI Copilot:
+```bash
+echo "GEMINI_API_KEY=your_gemini_api_key" >> .env
+docker compose up -d
+```
+
+### 3. Multi-Arch Build with Docker Buildx
+
+The multi-stage `Dockerfile` compiles the React/Vite client and the Node.js Express server into a standalone container with a non-root `node` user and active `HEALTHCHECK`:
+
+```bash
+# Set up Docker Buildx for cross-compilation
+docker buildx create --use --name edgebuilder
+docker buildx inspect --bootstrap
+
+# Build for both ARM64 (Jetson / Raspberry Pi) and AMD64 (x86_64 Cloud)
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -t edgedocker-sim:latest \
+  --load .
+```
+
+### 4. GitHub Actions Docker Workflow
+
+The repository includes an automated workflow in `.github/workflows/docker.yml`:
+- **Triggers**: On every push to `main` / `master` and on git release tags (`v*.*.*`).
+- **Cross-Compilation**: Uses QEMU and Docker Buildx to compile natively for both `linux/amd64` and `linux/arm64`.
+- **Registry**: Automatically pushes version-tagged and `latest` images to GitHub Container Registry (`ghcr.io`).
+- **Caching**: Utilizes GitHub Actions cache (`type=gha`) for ultra-fast incremental builds.
 
 ---
 
