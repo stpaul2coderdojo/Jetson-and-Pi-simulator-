@@ -537,7 +537,7 @@ app.get('/vnc.html', (req, res) => {
     hostVideoEl.playsInline = true;
     hostVideoEl.muted = true;
 
-    function updateOsButtons() {
+    function updateOsButtons(broadcast = false) {
       document.getElementById('btn-os-x11').className = 'btn' + (osMode === 'linux-x11' ? ' active-x11' : '');
       document.getElementById('btn-os-win11').className = 'btn' + (osMode === 'win11' ? ' active-win11' : '');
       document.getElementById('btn-os-mac').className = 'btn' + (osMode === 'macos-15' ? ' active-mac' : '');
@@ -549,13 +549,33 @@ app.get('/vnc.html', (req, res) => {
         'all-os': 'Tri-OS Matrix (X11 + Win11 + macOS)'
       };
       webrtcTitle.textContent = 'WEBRTC STREAM: ' + (labelMap[osMode] || osMode);
+      if (broadcast && bcChannel) {
+        try { bcChannel.postMessage({ fromVncHtml: true, osMode }); } catch {}
+      }
     }
 
-    document.getElementById('btn-os-x11').addEventListener('click', () => { osMode = 'linux-x11'; updateOsButtons(); });
-    document.getElementById('btn-os-win11').addEventListener('click', () => { osMode = 'win11'; updateOsButtons(); });
-    document.getElementById('btn-os-mac').addEventListener('click', () => { osMode = 'macos-15'; updateOsButtons(); });
-    document.getElementById('btn-os-all').addEventListener('click', () => { osMode = 'all-os'; updateOsButtons(); });
-    updateOsButtons();
+    let bcChannel = null;
+    let liveSyncLogs = null;
+    try {
+      bcChannel = new BroadcastChannel('mercor-vdi-webrtc-bus');
+      bcChannel.onmessage = (ev) => {
+        if (ev.data && !ev.data.fromVncHtml) {
+          if (ev.data.osMode) {
+            osMode = ev.data.osMode;
+            updateOsButtons(false);
+          }
+          if (Array.isArray(ev.data.terminalLogs) && ev.data.terminalLogs.length > 0) {
+            liveSyncLogs = ev.data.terminalLogs;
+          }
+        }
+      };
+    } catch {}
+
+    document.getElementById('btn-os-x11').addEventListener('click', () => { osMode = 'linux-x11'; updateOsButtons(true); });
+    document.getElementById('btn-os-win11').addEventListener('click', () => { osMode = 'win11'; updateOsButtons(true); });
+    document.getElementById('btn-os-mac').addEventListener('click', () => { osMode = 'macos-15'; updateOsButtons(true); });
+    document.getElementById('btn-os-all').addEventListener('click', () => { osMode = 'all-os'; updateOsButtons(true); });
+    updateOsButtons(false);
 
     canvas.addEventListener('mousemove', (e) => {
       if (viewOnly) return;

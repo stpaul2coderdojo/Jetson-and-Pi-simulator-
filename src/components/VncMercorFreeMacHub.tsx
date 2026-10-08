@@ -303,10 +303,10 @@ cloudflared tunnel --url tcp://127.0.0.1:5900`;
         </div>
 
         {/* Sub-navigation pills */}
-        <div className="flex items-center bg-slate-950/90 p-1 rounded-lg border border-slate-800 text-xs">
+        <div className="flex flex-wrap items-center gap-1 bg-slate-950/90 p-1 rounded-lg border border-slate-800 text-xs">
           <button
             onClick={() => setActiveSubTab('free-macos15-gha')}
-            className={`px-3 py-1.5 rounded-md font-semibold transition-all flex items-center gap-1.5 ${
+            className={`px-2.5 py-1.5 rounded-md font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeSubTab === 'free-macos15-gha'
                 ? 'bg-purple-500/25 text-purple-200 border border-purple-500/40'
                 : 'text-slate-400 hover:text-white'
@@ -317,18 +317,18 @@ cloudflared tunnel --url tcp://127.0.0.1:5900`;
           </button>
           <button
             onClick={() => setActiveSubTab('mercor-vnc-share')}
-            className={`px-3 py-1.5 rounded-md font-semibold transition-all flex items-center gap-1.5 ${
+            className={`px-2.5 py-1.5 rounded-md font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeSubTab === 'mercor-vnc-share'
                 ? 'bg-cyan-500/25 text-cyan-200 border border-cyan-500/40'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Globe className="w-3.5 h-3.5 text-cyan-400" />
-            2. Mercor VNC Screen Share &amp; Stream
+            2. Mercor VNC &amp; WebRTC Share
           </button>
           <button
             onClick={() => setActiveSubTab('os-vnc-scripts')}
-            className={`px-3 py-1.5 rounded-md font-semibold transition-all flex items-center gap-1.5 ${
+            className={`px-2.5 py-1.5 rounded-md font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeSubTab === 'os-vnc-scripts'
                 ? 'bg-amber-500/25 text-amber-200 border border-amber-500/40'
                 : 'text-slate-400 hover:text-white'

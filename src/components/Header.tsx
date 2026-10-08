@@ -26,38 +26,47 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <header className="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 px-4 lg:px-6 py-3">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
         {/* Brand & Identity */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-emerald-500 to-indigo-600 p-0.5 shadow-lg shadow-cyan-500/20 flex items-center justify-center">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-tr from-cyan-600 via-emerald-500 to-indigo-600 p-0.5 shadow-lg shadow-cyan-500/20 flex items-center justify-center">
             <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <Cpu className="w-5 h-5 text-cyan-400" />
+              <Cpu className="w-4 h-4 text-cyan-400" />
             </div>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-base font-bold tracking-tight text-white flex items-center gap-1.5">
                 EdgeDocker <span className="text-cyan-400">Sim</span>
               </h1>
-              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
-                ARM64 Tri-Cluster
-              </span>
-              <span className="hidden sm:inline-flex px-2 py-0.5 text-[10px] font-mono rounded bg-slate-800/90 text-slate-300 border border-slate-700">
-                Silicon Telemetry Simulator
+              <span className="px-2 py-0.5 text-[11px] font-semibold rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
+                ARM64 + Cloud VDI
               </span>
             </div>
-            <p className="text-xs text-slate-400">
-              Simulating Jetson Orin Nano (40 TOPS) • Raspberry Pi 5 (ARM64) • Thor Nano (250 TOPS)
+            <p className="text-[11px] text-slate-400 truncate">
+              Linux X11 (WorkSpaces) • Windows 11 • macOS 15 Sequoia • WebRTC &amp; noVNC
             </p>
           </div>
         </div>
 
-        {/* View Navigation Tabs */}
-        <div className="flex items-center bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-medium">
+        {/* View Navigation Tabs - wraps cleanly in narrow split-screen windows */}
+        <div className="flex flex-wrap items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-medium">
+          <button
+            id="view-vdi"
+            onClick={() => setViewMode('vdi')}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-all whitespace-nowrap ${
+              viewMode === 'vdi'
+                ? 'bg-emerald-950 text-emerald-300 border border-emerald-700 shadow-sm font-semibold'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+          >
+            <Monitor className="w-3.5 h-3.5 text-emerald-400" />
+            Cloud VDI &amp; WebRTC
+          </button>
           <button
             id="view-tri-screen"
             onClick={() => setViewMode('tri-screen')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-colors whitespace-nowrap ${
               viewMode === 'tri-screen'
                 ? 'bg-slate-800 text-cyan-400 shadow-sm font-semibold'
                 : 'text-slate-400 hover:text-slate-200'
@@ -69,55 +78,55 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             id="view-comparison"
             onClick={() => setViewMode('comparison')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-colors whitespace-nowrap ${
               viewMode === 'comparison'
                 ? 'bg-slate-800 text-cyan-400 shadow-sm font-semibold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5" />
-            Comparison Matrix
+            Comparison
           </button>
           <button
             id="view-hardware"
             onClick={() => setViewMode('hardware')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-colors whitespace-nowrap ${
               viewMode === 'hardware'
                 ? 'bg-slate-800 text-cyan-400 shadow-sm font-semibold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <CircuitBoard className="w-3.5 h-3.5" />
-            Hardware Specs
+            Hardware
           </button>
           <button
             id="view-docs"
             onClick={() => setViewMode('docs')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-colors whitespace-nowrap ${
               viewMode === 'docs'
                 ? 'bg-cyan-950 text-cyan-300 border border-cyan-700 shadow-sm font-semibold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
-            Docs & GitHub
+            Docs
           </button>
           <button
             id="view-notebook"
             onClick={() => setViewMode('notebook')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-all whitespace-nowrap ${
               viewMode === 'notebook'
                 ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-sm font-semibold'
                 : 'text-amber-300/80 hover:text-amber-200 hover:bg-slate-800'
             }`}
           >
             <FileCode className="w-3.5 h-3.5 text-amber-400" />
-            Jupyter &amp; Gemini AI
+            Jupyter AI
           </button>
           <button
             id="view-tools"
             onClick={() => setViewMode('tools')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-all whitespace-nowrap ${
               viewMode === 'tools'
                 ? 'bg-cyan-950 text-cyan-300 border border-cyan-700 shadow-sm font-semibold'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -125,18 +134,6 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <PenTool className="w-3.5 h-3.5 text-cyan-400" />
             Tools
-          </button>
-          <button
-            id="view-vdi"
-            onClick={() => setViewMode('vdi')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all whitespace-nowrap ${
-              viewMode === 'vdi'
-                ? 'bg-emerald-950 text-emerald-300 border border-emerald-700 shadow-sm font-semibold'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-          >
-            <Monitor className="w-3.5 h-3.5 text-emerald-400" />
-            Cloud VDI
           </button>
         </div>
 
