@@ -1,9 +1,9 @@
 import React from 'react';
-import { Cpu, Play, Square, RefreshCw, Zap, Layers, BarChart3, CircuitBoard, Flame, BookOpen, FileCode, PenTool } from 'lucide-react';
+import { Cpu, Play, Square, RefreshCw, Zap, Layers, BarChart3, CircuitBoard, Flame, BookOpen, FileCode, PenTool, Monitor } from 'lucide-react';
 
 interface HeaderProps {
-  viewMode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook' | 'tools';
-  setViewMode: (mode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook' | 'tools') => void;
+  viewMode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook' | 'tools' | 'vdi';
+  setViewMode: (mode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook' | 'tools' | 'vdi') => void;
   onDeployAll: () => void;
   onStopAll: () => void;
   onResetAll: () => void;
@@ -125,6 +125,18 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <PenTool className="w-3.5 h-3.5 text-cyan-400" />
             Tools
+          </button>
+          <button
+            id="view-vdi"
+            onClick={() => setViewMode('vdi')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all whitespace-nowrap ${
+              viewMode === 'vdi'
+                ? 'bg-emerald-950 text-emerald-300 border border-emerald-700 shadow-sm font-semibold'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+          >
+            <Monitor className="w-3.5 h-3.5 text-emerald-400" />
+            Cloud VDI
           </button>
         </div>
 
