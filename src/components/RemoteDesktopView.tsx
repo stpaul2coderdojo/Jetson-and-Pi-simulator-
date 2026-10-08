@@ -509,7 +509,7 @@ final class SequoiaWorkspaceEngine {
 };
 
 export const RemoteDesktopView: React.FC = () => {
-  const [activeVdiId, setActiveVdiId] = useState<VdiProviderId>('aws-workspaces');
+  const [activeVdiId, setActiveVdiId] = useState<VdiProviderId>('macos-15-mchip');
   const [layoutMode, setLayoutMode] = useState<'single-desktop' | 'triple-vdi-grid'>('single-desktop');
   const [vdiMap, setVdiMap] = useState<Record<VdiProviderId, VdiInstance>>(INITIAL_VDI_INSTANCES);
 
@@ -560,8 +560,11 @@ export const RemoteDesktopView: React.FC = () => {
   const [vncConfig, setVncConfig] = useState<VncConnectionConfig>({
     isConnected: true,
     mode: 'internal-rfb-bridge',
-    tunnelUrl: 'https://macos15-mchip-sequoia-vdi.trycloudflare.com/vnc.html?autoconnect=true&resize=scale',
-    rfbHost: 'macos15-mchip-sequoia-vdi.trycloudflare.com',
+    tunnelUrl:
+      typeof window !== 'undefined'
+        ? `${window.location.origin}/vnc.html?autoconnect=true&resize=scale&os=macos-15&mercor_project=MERCOR-MACOS15-EVAL-01`
+        : '/vnc.html?autoconnect=true&resize=scale&os=macos-15&mercor_project=MERCOR-MACOS15-EVAL-01',
+    rfbHost: typeof window !== 'undefined' ? window.location.host : '127.0.0.1:6080',
     rfbPort: 5900,
     wsPath: '/websockify',
     encoding: 'Tight + Zlib (RFB 3.8)',

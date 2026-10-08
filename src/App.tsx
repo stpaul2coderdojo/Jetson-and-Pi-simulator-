@@ -53,7 +53,7 @@ export default function App() {
   });
 
   // Current view mode: 'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook' | 'tools' | 'vdi'
-  const [viewMode, setViewMode] = useState<'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook' | 'tools' | 'vdi'>('tri-screen');
+  const [viewMode, setViewMode] = useState<'tri-screen' | 'comparison' | 'hardware' | 'docs' | 'notebook' | 'tools' | 'vdi'>('vdi');
 
   // Modals state
   const [isConfigEditorOpen, setIsConfigEditorOpen] = useState(false);
