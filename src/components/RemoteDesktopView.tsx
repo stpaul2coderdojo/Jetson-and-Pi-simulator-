@@ -114,7 +114,7 @@ const INITIAL_VDI_INSTANCES: Record<VdiProviderId, VdiInstance> = {
   'aws-workspaces': {
     id: 'aws-workspaces',
     name: 'Amazon WorkSpaces — Linux X11 Desktop',
-    providerBadge: 'AWS WorkSpaces Core',
+    providerBadge: 'AWS WorkSpaces Linux X11',
     osName: 'Ubuntu 24.04.1 LTS (X.Org X11R7.7)',
     osVersion: 'Kernel 6.8.0-45-aws • XFCE4 / Xfwm4 Window Manager',
     windowSystem: 'X11 / X.Org Server 21.1.11 (DISPLAY=:0.0)',
@@ -141,47 +141,47 @@ const INITIAL_VDI_INSTANCES: Record<VdiProviderId, VdiInstance> = {
   },
   'm365-win11': {
     id: 'm365-win11',
-    name: 'Microsoft 365 Cloud PC — Windows 11 Desktop',
-    providerBadge: 'Windows 365 Enterprise',
-    osName: 'Windows 11 Enterprise 24H2',
-    osVersion: 'OS Build 26100.2033 • DWM Fluent Desktop',
-    windowSystem: 'Win32 / Desktop Window Manager (dwm.exe)',
-    architecture: 'x86_64 (Intel Xeon Platinum 8370C)',
-    cpuModel: 'Intel Xeon Platinum 8370C @ 3.50GHz',
+    name: 'Amazon WorkSpaces on Browser — Web Access (WSP)',
+    providerBadge: 'AWS WorkSpaces Web Access',
+    osName: 'Amazon WorkSpaces PowerPro Bundle (WSP 2.0 HTML5 Browser)',
+    osVersion: 'clients.amazonworkspaces.com/webclient • DeviceTypeWeb=ALLOW',
+    windowSystem: 'AWS WSP 2.0 Browser Client (WebRTC H.264 / HTTPS 443)',
+    architecture: 'x86_64 (AWS Nitro System • Intel Xeon 8375C)',
+    cpuModel: 'Intel Xeon Scalable 8375C @ 3.50GHz (PowerPro)',
     cores: '8 vCPU',
-    gpuModel: 'Azure NVv4 DirectX 12 Ultimate (16 GB)',
+    gpuModel: 'AWS GraphicsPro G4dn NVIDIA T4 (16 GB VRAM • WSP)',
     memoryGb: 32,
-    storageDesc: '512 GB Azure Premium SSD v2',
-    protocol: 'Azure AVD RDP Shortpath (UDP)',
-    region: 'West US 3 (Phoenix) • Entra Joined',
-    privateIp: '172.16.42.19',
-    hostname: 'CPC-W11-ENT-904.corp.microsoft',
+    storageDesc: '175 GB Root + 100 GB User KMS-Encrypted EBS gp3',
+    protocol: 'Amazon WSP 2.0 over WebRTC (Browser HTTPS/UDP 4195)',
+    region: 'us-west-2 (Oregon) • Directory d-9267481a2b',
+    privateIp: '10.0.14.88',
+    hostname: 'ws-9f84c2a10.corp.edge-vdi.aws',
     resolution: '2560 × 1440',
     refreshRateHz: 60,
     status: 'RUNNING',
-    latencyMs: 18,
-    bandwidthMbps: 29.8,
+    latencyMs: 15,
+    bandwidthMbps: 31.2,
     fps: 60,
-    cpuLoad: 24,
-    ramUsedGb: 14.2,
-    gpuLoad: 19,
-    uptime: '09d 18h 41m'
+    cpuLoad: 22,
+    ramUsedGb: 11.6,
+    gpuLoad: 18,
+    uptime: '11d 04h 19m'
   },
   'macos-15-mchip': {
     id: 'macos-15-mchip',
-    name: 'macOS 15 Sequoia — Apple Silicon M4 Max VDI',
-    providerBadge: 'Apple Silicon Cloud Mac',
+    name: 'macOS 15 Sequoia — Apple Silicon M4 Max (Amazon DCV & bVNC SSH)',
+    providerBadge: 'Amazon DCV & bVNC Console',
     osName: 'macOS Sequoia 15.3 (Darwin 24.3.0)',
-    osVersion: 'Build 24D60 • arm64e Quartz Compositor',
-    windowSystem: 'macOS WindowServer (Metal 3 Quartz)',
+    osVersion: 'Build 24D60 • arm64e Quartz Compositor • launchctl gui/501',
+    windowSystem: 'macOS WindowServer (Metal 3 Quartz) • DCV Console Session',
     architecture: 'arm64 (Apple M4 Max SoC)',
     cpuModel: 'Apple M4 Max (12P + 4E Cores)',
     cores: '16-Core CPU / 40-Core GPU / 16-Core ANE',
     gpuModel: 'Apple M4 Max Integrated 40-Core Metal 3',
     memoryGb: 64,
     storageDesc: '1 TB Apple Fabric NVMe (7.4 GB/s)',
-    protocol: 'Apple Screen Sharing / HEVC 4:4:4',
-    region: 'us-west-sjc1 (San Jose Bare-Metal)',
+    protocol: 'Amazon DCV (QUIC :8443) • launchctl bootstrap gui/501 (bVNC SSH :5900)',
+    region: 'us-west-sjc1 (Bare-Metal / EC2 Mac)',
     privateIp: '192.168.108.55',
     hostname: 'mac2-m4max-sequoia.local',
     resolution: '2880 × 1620 (HiDPI)',
@@ -251,7 +251,7 @@ const DEFAULT_WINDOWS_BY_VDI: Record<VdiProviderId, Record<DesktopWindowId, Wind
   'm365-win11': {
     files: {
       id: 'files',
-      title: 'File Explorer — This PC > Local Disk (C:) > Users > corp-admin > Projects',
+      title: 'WorkSpaces Browser File Manager — D:\\Users\\ws-admin\\AWS-WorkSpaces-Stack',
       isOpen: true,
       isMinimized: false,
       isMaximized: false,
@@ -263,7 +263,7 @@ const DEFAULT_WINDOWS_BY_VDI: Record<VdiProviderId, Record<DesktopWindowId, Wind
     },
     terminal: {
       id: 'terminal',
-      title: 'Administrator: Windows PowerShell 7.4 (Win32)',
+      title: 'AWS CLI & WorkSpaces WSP Shell — ws-9f84c2a10 (DeviceTypeWeb=ALLOW)',
       isOpen: true,
       isMinimized: false,
       isMaximized: false,
@@ -275,7 +275,7 @@ const DEFAULT_WINDOWS_BY_VDI: Record<VdiProviderId, Record<DesktopWindowId, Wind
     },
     ide: {
       id: 'ide',
-      title: 'Microsoft Visual Studio 2022 — CloudDesktopService.cs',
+      title: 'AWS CloudFormation & Terraform IaC Studio — aws-workspaces-browser-stack.yaml',
       isOpen: true,
       isMinimized: false,
       isMaximized: false,
@@ -287,7 +287,7 @@ const DEFAULT_WINDOWS_BY_VDI: Record<VdiProviderId, Record<DesktopWindowId, Wind
     },
     monitor: {
       id: 'monitor',
-      title: 'Task Manager — Performance & Win32 Processes',
+      title: 'Amazon WorkSpaces WSP 2.0 Browser Telemetry & CloudWatch Session Monitor',
       isOpen: true,
       isMinimized: false,
       isMaximized: false,
@@ -366,25 +366,29 @@ const FILESYSTEM_BY_VDI: Record<VdiProviderId, Record<string, FileEntry[]>> = {
     ]
   },
   'm365-win11': {
-    'C:\\Users\\corp-admin\\Projects': [
-      { name: 'CloudDesktopService.cs', type: 'file', size: '18.4 KB', modified: 'Today 03:30 AM', permissions: 'Archive', contentPreview: 'using Microsoft.SemanticKernel;\nusing System.Runtime.InteropServices;\n\nnamespace M365CloudPC;\npublic class DesktopWindowController {\n    [DllImport("user32.dll")]\n    public static extern IntPtr GetForegroundWindow();\n}' },
-      { name: 'Win11_FluentUI_Manifest.xml', type: 'file', size: '4.2 KB', modified: 'Yesterday', permissions: 'Read-only', contentPreview: '<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">\n  <application name="Windows365EnterpriseDWM" />\n</assembly>' },
-      { name: 'DirectML_Weights', type: 'folder', size: '248 MB', modified: 'Today 02:10 AM', permissions: 'Directory' },
-      { name: 'EntraID_Policy.json', type: 'file', size: '6.8 KB', modified: 'Oct 05', permissions: 'Archive', contentPreview: '{\n  "tenant": "corp.microsoft.onmicrosoft.com",\n  "rdpShortpath": "Enabled",\n  "nestedVirtualization": true\n}' },
-      { name: 'build_release.ps1', type: 'file', size: '2.1 KB', modified: 'Oct 06', permissions: 'Executable', contentPreview: 'dotnet publish -c Release -r win-x64 --self-contained true' }
+    'D:\\Users\\ws-admin\\AWS-WorkSpaces-Stack': [
+      { name: 'aws-workspaces-browser-stack.yaml', type: 'file', size: '12.6 KB', modified: 'Today 04:15', permissions: 'CloudFormation', contentPreview: 'AWSTemplateFormatVersion: "2010-09-09"\nDescription: Amazon WorkSpaces WSP Browser Access Stack\nResources:\n  WorkSpacesDirectory:\n    Type: AWS::DirectoryService::MicrosoftAD\n  BrowserWorkSpace:\n    Type: AWS::WorkSpaces::Workspace' },
+      { name: 'main.tf', type: 'file', size: '8.4 KB', modified: 'Today 04:12', permissions: 'Terraform HCL', contentPreview: 'resource "aws_workspaces_directory" "browser_vdi" {\n  directory_id = aws_directory_service_directory.ad.id\n  workspace_access_properties {\n    device_type_web = "ALLOW"\n  }\n}' },
+      { name: 'enable-browser-access.sh', type: 'file', size: '3.2 KB', modified: 'Today 04:05', permissions: 'AWS CLI Script', contentPreview: 'aws workspaces modify-workspace-access-properties \\\n  --resource-id d-9267481a2b \\\n  --workspace-access-properties DeviceTypeWeb=ALLOW,DeviceTypeOsx=ALLOW' },
+      { name: 'wsp-webrtc-policy.json', type: 'file', size: '4.9 KB', modified: 'Yesterday', permissions: 'IAM / WSP Policy', contentPreview: '{\n  "Protocol": "WSP",\n  "WebAccess": "ENABLED",\n  "ClientUrl": "https://clients.amazonworkspaces.com/webclient",\n  "ClipboardRedirection": true\n}' },
+      { name: 'CloudWatch_WSP_Logs', type: 'folder', size: '64.0 MB', modified: 'Today 03:50', permissions: 'Directory' }
     ],
-    'C:\\Windows\\System32': [
-      { name: 'dwm.exe', type: 'file', size: '1.14 MB', modified: '24H2 Build', permissions: 'System', contentPreview: 'Desktop Window Manager (Win32 Compositor)' },
-      { name: 'explorer.exe', type: 'file', size: '4.82 MB', modified: '24H2 Build', permissions: 'System', contentPreview: 'Windows Shell Experience Host' },
-      { name: 'Taskmgr.exe', type: 'file', size: '2.30 MB', modified: '24H2 Build', permissions: 'System', contentPreview: 'Windows 11 Task Manager' }
+    'C:\\Program Files\\Amazon\\WSP': [
+      { name: 'wsp-host-service.exe', type: 'file', size: '6.40 MB', modified: 'WSP 2.0.14', permissions: 'AWS Service', contentPreview: 'Amazon WorkSpaces Streaming Protocol (WSP) H.264/WebRTC Host Agent' },
+      { name: 'dcv-webrtc-gateway.dll', type: 'file', size: '3.18 MB', modified: 'WSP 2.0.14', permissions: 'AWS Service', contentPreview: 'HTTPS/WSS 443 & UDP 4195 Browser Media Transport' },
+      { name: 'workspaces-agent.json', type: 'file', size: '1.85 KB', modified: 'WSP 2.0.14', permissions: 'Config', contentPreview: '{"registrationCode": "WSP+us-west-2+9XK4P2", "webAccess": true}' }
     ]
   },
   'macos-15-mchip': {
     '/Users/dev-m4max/Projects': [
+      { name: 'setup-amazon-dcv-macos.sh', type: 'file', size: '3.8 KB', modified: 'Just now', permissions: '-rwxr-xr-x', contentPreview: '#!/usr/bin/env bash\n# Amazon DCV Server Setup on macOS (Apple Silicon arm64)\nsudo installer -pkg nice-dcv-server-macos-arm64.pkg -target /\nsudo launchctl bootstrap system /Library/LaunchDaemons/com.nicesoftware.dcvserver.plist\nsudo dcv create-session --type console --owner $(whoami) console' },
+      { name: 'launchctl-bootstrap-bvnc-console.sh', type: 'file', size: '3.4 KB', modified: 'Just now', permissions: '-rwxr-xr-x', contentPreview: '#!/usr/bin/env bash\n# launchctl bootstrap a Console Session for bVNC over SSH\nsudo systemsetup -setremotelogin on\nlaunchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.bvnc.macconsole.plist' },
+      { name: 'com.bvnc.macconsole.plist', type: 'file', size: '920 B', modified: 'Just now', permissions: '-rw-r--r--', contentPreview: '<?xml version="1.0" encoding="UTF-8"?>\n<plist version="1.0">\n<dict>\n  <key>Label</key><string>com.bvnc.macconsole</string>\n  <key>ProgramArguments</key><array><string>/System/Library/CoreServices/RemoteManagement/AppleVNCServer.bundle/Contents/MacOS/AppleVNCServer</string></array>\n  <key>LimitLoadToSessionType</key><array><string>Aqua</string></array>\n</dict>\n</plist>' },
+      { name: 'dcv.conf', type: 'file', size: '1.4 KB', modified: 'Just now', permissions: '-rw-r--r--', contentPreview: '[session-management]\ncreate-session = true\n[display]\nresolution = "2880x1620"\n[connectivity]\nweb-port = 8443\nenable-quic = true' },
+      { name: 'bvnc-connection-profile.json', type: 'file', size: '840 B', modified: 'Just now', permissions: '-rw-r--r--', contentPreview: '{\n  "connectionType": "SSH_TUNNELED_VNC",\n  "sshHost": "mac2-m4max-sequoia.local",\n  "sshPort": 22,\n  "vncTarget": "127.0.0.1:5900"\n}' },
       { name: 'MetalComputeEngine.swift', type: 'file', size: '21.6 KB', modified: 'Today 03:31', permissions: 'rw-r--r--', contentPreview: 'import Metal\nimport MetalPerformanceShadersGraph\nimport AppKit\n\n@MainActor\nfinal class QuartzWorkspaceController {\n    let device = MTLCreateSystemDefaultDevice()!\n}' },
       { name: 'SequoiaWindowTiling.plist', type: 'file', size: '3.1 KB', modified: 'Yesterday', permissions: 'rw-r--r--', contentPreview: '<?xml version="1.0" encoding="UTF-8"?>\n<plist version="1.0">\n<dict>\n  <key>StageManagerEnabled</key><true/>\n  <key>QuartzHiDPI</key><string>2880x1620@120Hz</string>\n</dict>\n</plist>' },
-      { name: 'MLX_Checkpoints', type: 'folder', size: '1.2 GB', modified: 'Today 01:40', permissions: 'rwxr-xr-x' },
-      { name: 'Package.swift', type: 'file', size: '1.9 KB', modified: 'Oct 04', permissions: 'rw-r--r--', contentPreview: '// swift-tools-version: 6.0\nimport PackageDescription\nlet package = Package(name: "MacWorkspaceApp", platforms: [.macOS(.v15)])' }
+      { name: 'MLX_Checkpoints', type: 'folder', size: '1.2 GB', modified: 'Today 01:40', permissions: 'rwxr-xr-x' }
     ],
     '/Applications': [
       { name: 'Xcode.app', type: 'folder', size: '12.4 GB', modified: '16.2 (16C5032a)', permissions: 'rwxr-xr-x' },
@@ -411,31 +415,39 @@ const INITIAL_TERMINAL_LOGS: Record<VdiProviderId, string[]> = {
     '0x0400000a  0 ws-x11-ubuntu24 NVIDIA X Server Settings — DISPLAY :0.0'
   ],
   'm365-win11': [
-    'PowerShell 7.4.6 (win-x64) • Windows 11 Enterprise 24H2 (OS Build 26100.2033)',
-    'PS C:\\Users\\corp-admin\\Projects> Get-ComputerInfo | Select-Object WindowsProductName, OsHardwareAbstractionLayer, CsProcessors',
-    'WindowsProductName         : Windows 11 Enterprise',
-    'OsHardwareAbstractionLayer : 10.0.26100.1',
-    'CsProcessors               : {Intel(R) Xeon(R) Platinum 8370C CPU @ 3.50GHz}',
-    'PS C:\\Users\\corp-admin\\Projects> Get-Process dwm, explorer, devenv, pwsh | Format-Table ProcessName, Id, WorkingSet64',
-    'ProcessName   Id WorkingSet64',
-    '-----------   -- ------------',
-    'devenv      8842   1482915840',
-    'dwm         1204    214958080',
-    'explorer    4410    318767104',
-    'pwsh        9120    142606336'
+    'Amazon WorkSpaces WSP 2.0 Browser Shell • Region: us-west-2 • WorkspaceId: ws-9f84c2a10',
+    'Browser Client Endpoint: https://clients.amazonworkspaces.com/webclient#/session/ws-9f84c2a10',
+    'aws-admin@ws-9f84c2a10 D:\\Users\\ws-admin\\AWS-WorkSpaces-Stack> aws workspaces describe-workspaces --workspace-ids ws-9f84c2a10',
+    '{',
+    '  "Workspaces": [{',
+    '    "WorkspaceId": "ws-9f84c2a10",',
+    '    "DirectoryId": "d-9267481a2b",',
+    '    "UserName": "ws-admin",',
+    '    "IpAddress": "10.0.14.88",',
+    '    "State": "AVAILABLE",',
+    '    "BundleId": "wsb-8vbl42p1r (PowerPro 8vCPU 32GB WSP)",',
+    '    "WorkspaceProperties": { "Protocols": ["WSP"], "RunningMode": "AUTO_STOP" }',
+    '  }]',
+    '}',
+    'aws-admin@ws-9f84c2a10 D:\\Users\\ws-admin\\AWS-WorkSpaces-Stack> aws workspaces describe-workspace-directories --directory-ids d-9267481a2b --query "Directories[0].WorkspaceAccessProperties"',
+    '{ "DeviceTypeWeb": "ALLOW", "DeviceTypeOsx": "ALLOW", "DeviceTypeLinux": "ALLOW" }'
   ],
   'macos-15-mchip': [
-    'Last login: Thu Oct  8 03:20:11 on ttys000 (Apple Screen Sharing HEVC 4:4:4)',
+    'Last login: Thu Oct  8 03:20:11 on ttys000 (Apple Silicon arm64e)',
     'dev-m4max@mac2-m4max-sequoia ~/Projects % sw_vers && uname -m',
-    'ProductName:            macOS',
-    'ProductVersion:         15.3',
-    'BuildVersion:           24D60',
-    'arm64',
-    'dev-m4max@mac2-m4max-sequoia ~/Projects % sysctl -n machdep.cpu.brand_string && system_profiler SPDisplaysDataType | grep -E "Chipset|Metal|Resolution"',
-    'Apple M4 Max',
-    '      Chipset Model: Apple M4 Max (40-Core GPU)',
-    '      Metal Support: Metal 3',
-    '      Resolution: 2880 x 1620 (Retina HiDPI 120Hz ProMotion)'
+    'ProductName:            macOS Sequoia',
+    'ProductVersion:         15.3 (Build 24D60)',
+    'arm64 (Apple M4 Max 16-Core CPU / 40-Core GPU)',
+    'dev-m4max@mac2-m4max-sequoia ~/Projects % launchctl print gui/501/com.bvnc.macconsole | head -n 4',
+    'com.bvnc.macconsole = {',
+    '    active count = 1',
+    '    state = running (PID 41209)',
+    '    path = /System/Library/CoreServices/RemoteManagement/AppleVNCServer.bundle/Contents/MacOS/AppleVNCServer',
+    '}',
+    'dev-m4max@mac2-m4max-sequoia ~/Projects % dcv describe-sessions',
+    '{ "sessions": [{ "id": "console", "owner": "dev-m4max", "type": "console", "port": 8443, "quic": true }] }',
+    'dev-m4max@mac2-m4max-sequoia ~/Projects % echo "[Amazon DCV WebRTC] https://mac2-m4max-sequoia.local:8443#console"',
+    'dev-m4max@mac2-m4max-sequoia ~/Projects % echo "[bVNC over SSH] Loopback 127.0.0.1:5900 via ssh -L 5900:127.0.0.1:5900"'
   ]
 };
 
@@ -464,25 +476,31 @@ if __name__ == "__main__":
     for win in session.query_x11_tree():
         print(f"  -> Window {win['xid']} [{win['class']}] @ {win['geometry']}")`,
 
-  'm365-win11': `// Microsoft 365 Cloud PC — Windows 11 Enterprise Win32 & DWM Desktop Service
-using System;
-using System.Collections.Generic;
+  'm365-win11': `AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Amazon WorkSpaces on Browser (WSP Web Access) + Directory + VPC Stack'
+Resources:
+  WorkSpacesBrowserDirectory:
+    Type: AWS::DirectoryService::MicrosoftAD
+    Properties:
+      Name: corp.edge-vdi.aws
+      Edition: Standard
+      Password: '{{resolve:secretsmanager:WorkSpacesADPassword}}'
+      VpcSettings:
+        VpcId: !Ref WorkSpacesVPC
+        SubnetIds: [!Ref PrivateSubnetA, !Ref PrivateSubnetB]
 
-namespace M365CloudPC.Desktop
-{
-    public record Win32WindowInfo(string Handle, string Title, string Process, string SnapZone);
-
-    public static class DwmWorkspaceManager
-    {
-        public static List<Win32WindowInfo> EnumerateActiveWindows() => new()
-        {
-            new("HWND_0x001408A2", "File Explorer - Projects", "explorer.exe", "TopLeft"),
-            new("HWND_0x002904F0", "Windows PowerShell 7.4", "pwsh.exe", "TopRight"),
-            new("HWND_0x00410B18", "Visual Studio 2022", "devenv.exe", "BottomLeft"),
-            new("HWND_0x00520C04", "Task Manager", "Taskmgr.exe", "BottomRight")
-        };
-    }
-}`,
+  BrowserEnabledWorkSpace:
+    Type: AWS::WorkSpaces::Workspace
+    Properties:
+      DirectoryId: !Ref WorkSpacesBrowserDirectory
+      UserName: ws-admin
+      BundleId: wsb-8vbl42p1r # PowerPro 8 vCPU / 32 GB RAM (WSP Protocol)
+      RootVolumeEncryptionEnabled: true
+      UserVolumeEncryptionEnabled: true
+      WorkspaceProperties:
+        RunningMode: AUTO_STOP
+        RunningModeAutoStopTimeoutInMinutes: 60
+        ComputeTypeName: POWERPRO`,
 
   'macos-15-mchip': `// macOS 15 Sequoia — Apple M4 Max Quartz WindowServer & Metal 3 Workspace
 import Foundation
@@ -509,9 +527,15 @@ final class SequoiaWorkspaceEngine {
 };
 
 export const RemoteDesktopView: React.FC = () => {
-  const [activeVdiId, setActiveVdiId] = useState<VdiProviderId>('macos-15-mchip');
+  const [activeVdiId, setActiveVdiId] = useState<VdiProviderId>('m365-win11');
   const [layoutMode, setLayoutMode] = useState<'single-desktop' | 'triple-vdi-grid'>('single-desktop');
   const [vdiMap, setVdiMap] = useState<Record<VdiProviderId, VdiInstance>>(INITIAL_VDI_INSTANCES);
+  const [showAwsConfigStack, setShowAwsConfigStack] = useState<boolean>(true);
+  const [awsStackTab, setAwsStackTab] = useState<'cloudformation' | 'terraform' | 'aws-cli' | 'workspaces-web-portal'>('cloudformation');
+  const [awsRegion, setAwsRegion] = useState<string>('us-west-2');
+  const [awsBundleType, setAwsBundleType] = useState<'POWERPRO_WSP' | 'PERFORMANCE_WSP' | 'GRAPHICS_G4DN_WSP'>('POWERPRO_WSP');
+  const [awsRunningMode, setAwsRunningMode] = useState<'AUTO_STOP' | 'ALWAYS_ON'>('AUTO_STOP');
+  const [awsCopiedStack, setAwsCopiedStack] = useState<string | null>(null);
 
   // Per-VDI Multi-Window Desktop State
   const [windowsByVdi, setWindowsByVdi] = useState<Record<VdiProviderId, Record<DesktopWindowId, WindowState>>>(
@@ -521,12 +545,12 @@ export const RemoteDesktopView: React.FC = () => {
   // Per-VDI File Browser State
   const [currentPathByVdi, setCurrentPathByVdi] = useState<Record<VdiProviderId, string>>({
     'aws-workspaces': '/home/ws-user/workspace',
-    'm365-win11': 'C:\\Users\\corp-admin\\Projects',
+    'm365-win11': 'D:\\Users\\ws-admin\\AWS-WorkSpaces-Stack',
     'macos-15-mchip': '/Users/dev-m4max/Projects'
   });
   const [selectedFileByVdi, setSelectedFileByVdi] = useState<Record<VdiProviderId, FileEntry | null>>({
     'aws-workspaces': FILESYSTEM_BY_VDI['aws-workspaces']['/home/ws-user/workspace'][0],
-    'm365-win11': FILESYSTEM_BY_VDI['m365-win11']['C:\\Users\\corp-admin\\Projects'][0],
+    'm365-win11': FILESYSTEM_BY_VDI['m365-win11']['D:\\Users\\ws-admin\\AWS-WorkSpaces-Stack'][0],
     'macos-15-mchip': FILESYSTEM_BY_VDI['macos-15-mchip']['/Users/dev-m4max/Projects'][0]
   });
 
@@ -651,7 +675,7 @@ export const RemoteDesktopView: React.FC = () => {
         vdiId === 'aws-workspaces'
           ? `X11 DISPLAY=:0.0 • X.Org 21.1.11 (XFCE4) • ${vdi.resolution}`
           : vdiId === 'm365-win11'
-          ? `Windows 11 Enterprise (Win32 DWM) • ${vdi.hostname} • ${vdi.resolution}`
+          ? `Amazon WorkSpaces on Browser (WSP 2.0) • clients.amazonworkspaces.com • ${vdi.resolution}`
           : ` macOS 15.3 Sequoia (Quartz Metal 3) • Apple M4 Max • ${vdi.resolution}`;
       ctx.fillText(topLabel, rx + 12, ry + 18);
 
@@ -836,8 +860,8 @@ export const RemoteDesktopView: React.FC = () => {
     mode: 'internal-rfb-bridge',
     tunnelUrl:
       typeof window !== 'undefined'
-        ? `${window.location.origin}/vnc.html?autoconnect=true&resize=scale&os=macos-15&mercor_project=MERCOR-MACOS15-EVAL-01`
-        : '/vnc.html?autoconnect=true&resize=scale&os=macos-15&mercor_project=MERCOR-MACOS15-EVAL-01',
+        ? `${window.location.origin}/vnc.html?autoconnect=true&resize=scale&os=win11&mercor_project=MERCOR-AWS-WORKSPACES-01`
+        : '/vnc.html?autoconnect=true&resize=scale&os=win11&mercor_project=MERCOR-AWS-WORKSPACES-01',
     rfbHost: typeof window !== 'undefined' ? window.location.host : '127.0.0.1:6080',
     rfbPort: 5900,
     wsPath: '/websockify',
@@ -845,8 +869,8 @@ export const RemoteDesktopView: React.FC = () => {
     colorDepth: '24-bit TrueColor',
     viewOnly: false,
     sharedSession: true,
-    mercorProjectId: 'MERCOR-MACOS15-EVAL-01',
-    mercorTaskPrompt: 'Apple Silicon macOS 15 Sequoia VNC Evaluation & Screen Share',
+    mercorProjectId: 'MERCOR-AWS-WORKSPACES-01',
+    mercorTaskPrompt: 'Amazon WorkSpaces on Browser (WSP) & Multi-OS VDI Evaluation',
     candidateHandle: 'bheemaiah@alumni.iitm.ac.in',
     sessionToken: 'mrc_rfb_99482a10f'
   });
@@ -860,6 +884,288 @@ export const RemoteDesktopView: React.FC = () => {
 
   const activeVdi = vdiMap[activeVdiId];
   const activeWindows = windowsByVdi[activeVdiId];
+
+  // AWS Configuration Stack Templates for Amazon WorkSpaces on Browser (WSP Web Access)
+  const bundleIdMap: Record<'POWERPRO_WSP' | 'PERFORMANCE_WSP' | 'GRAPHICS_G4DN_WSP', { id: string; spec: string; compute: string }> = {
+    POWERPRO_WSP: { id: 'wsb-8vbl42p1r', spec: '8 vCPU / 32 GB RAM (WSP 2.0)', compute: 'POWERPRO' },
+    PERFORMANCE_WSP: { id: 'wsb-3t9k81m2p', spec: '2 vCPU / 8 GB RAM (WSP 2.0)', compute: 'PERFORMANCE' },
+    GRAPHICS_G4DN_WSP: { id: 'wsb-g4dn99x1w', spec: '4 vCPU / 16 GB RAM / NVIDIA T4 GPU (WSP 2.0)', compute: 'GRAPHICS_G4DN' }
+  };
+  const selectedBundle = bundleIdMap[awsBundleType];
+
+  const awsCloudFormationTemplate = `AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Amazon WorkSpaces on Browser (WSP Web Access) Full Configuration Stack (${awsRegion}).
+  Provisions VPC, 2 Private Subnets, AWS Managed Microsoft AD, IP Access Control Group,
+  Directory WebAccess (DeviceTypeWeb=ALLOW), and WSP-enabled WorkSpace instance.
+
+Parameters:
+  DirectoryAdminPassword:
+    Type: String
+    NoEcho: true
+    Default: 'WorkSpaces#2026!AwsVdi'
+  WorkSpaceUserName:
+    Type: String
+    Default: 'ws-admin'
+  WorkSpaceBundleId:
+    Type: String
+    Default: '${selectedBundle.id}' # ${selectedBundle.spec}
+
+Resources:
+  # 1. VPC & Dual-AZ Networking for AWS Directory Service + WorkSpaces WSP
+  WorkSpacesVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: aws-workspaces-browser-vpc
+
+  PrivateSubnetAZ1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref WorkSpacesVPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Sub '\${AWS::Region}a'
+
+  PrivateSubnetAZ2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref WorkSpacesVPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Sub '\${AWS::Region}b'
+
+  # 2. AWS Managed Microsoft AD Directory for WorkSpaces Authentication
+  WorkSpacesDirectory:
+    Type: AWS::DirectoryService::MicrosoftAD
+    Properties:
+      Name: corp.edge-vdi.aws
+      Password: !Ref DirectoryAdminPassword
+      Edition: Standard
+      VpcSettings:
+        VpcId: !Ref WorkSpacesVPC
+        SubnetIds:
+          - !Ref PrivateSubnetAZ1
+          - !Ref PrivateSubnetAZ2
+
+  # 3. IP Access Control Group for Browser Web Access (HTTPS 443 / UDP 4195 WSP)
+  WorkSpacesBrowserIpGroup:
+    Type: AWS::WorkSpaces::IpGroup
+    Properties:
+      GroupName: WorkSpacesBrowserWebAccessIpGroup
+      GroupDesc: Allow HTTPS/WebRTC Browser Access to Amazon WorkSpaces
+      UserRules:
+        - IpRule: 0.0.0.0/0
+          RuleDesc: Allow Browser Web Client Access (WSP over HTTPS/WebRTC)
+
+  # 4. Amazon WorkSpaces WSP Instance (Accessible via https://clients.amazonworkspaces.com/webclient)
+  BrowserEnabledWorkSpace:
+    Type: AWS::WorkSpaces::Workspace
+    Properties:
+      DirectoryId: !Ref WorkSpacesDirectory
+      UserName: !Ref WorkSpaceUserName
+      BundleId: !Ref WorkSpaceBundleId
+      RootVolumeEncryptionEnabled: true
+      UserVolumeEncryptionEnabled: true
+      VolumeEncryptionKey: alias/aws/workspaces
+      WorkspaceProperties:
+        ComputeTypeName: ${selectedBundle.compute}
+        RootVolumeSizeGib: 175
+        UserVolumeSizeGib: 100
+        RunningMode: ${awsRunningMode}
+        ${awsRunningMode === 'AUTO_STOP' ? 'RunningModeAutoStopTimeoutInMinutes: 60' : '# Always-On 24/7 Instant Browser Access'}
+
+Outputs:
+  WorkSpacesWebAccessUrl:
+    Description: Launch Amazon WorkSpaces directly in Chrome/Edge/Firefox Browser (Zero Client Install)
+    Value: 'https://clients.amazonworkspaces.com/webclient'
+  DirectoryId:
+    Description: Directory ID to enable DeviceTypeWeb=ALLOW
+    Value: !Ref WorkSpacesDirectory
+  WorkSpaceId:
+    Description: Provisioned WSP WorkSpace Instance ID
+    Value: !Ref BrowserEnabledWorkSpace`;
+
+  const awsTerraformConfig = `# Terraform AWS Stack: Amazon WorkSpaces on Browser (WSP Web Access)
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.70"
+    }
+  }
+}
+
+provider "aws" {
+  region = "${awsRegion}"
+}
+
+# 1. AWS Managed Microsoft AD for WorkSpaces
+resource "aws_directory_service_directory" "workspaces_ad" {
+  name     = "corp.edge-vdi.aws"
+  password = var.ad_admin_password
+  size     = "Small"
+  type     = "MicrosoftAD"
+
+  vpc_settings {
+    vpc_id     = aws_vpc.workspaces_vpc.id
+    subnet_ids = [aws_subnet.private_a.id, aws_subnet.private_b.id]
+  }
+}
+
+# 2. Register Directory & Explicitly Enable Browser Web Access (device_type_web = "ALLOW")
+resource "aws_workspaces_directory" "browser_enabled_dir" {
+  directory_id = aws_directory_service_directory.workspaces_ad.id
+  subnet_ids   = [aws_subnet.private_a.id, aws_subnet.private_b.id]
+
+  workspace_access_properties {
+    device_type_web     = "ALLOW" # CRITICAL: Enables https://clients.amazonworkspaces.com/webclient
+    device_type_osx     = "ALLOW"
+    device_type_windows = "ALLOW"
+    device_type_linux   = "ALLOW"
+    device_type_ios     = "DENY"
+    device_type_android = "DENY"
+  }
+
+  workspace_creation_properties {
+    enable_internet_access              = true
+    enable_maintenance_mode             = true
+    user_enabled_as_local_administrator = true
+  }
+}
+
+# 3. Provision WSP-Enabled Amazon WorkSpace for Browser Streaming
+resource "aws_workspaces_workspace" "browser_vdi" {
+  directory_id = aws_workspaces_directory.browser_enabled_dir.id
+  bundle_id    = "${selectedBundle.id}" # ${selectedBundle.spec}
+  user_name    = "ws-admin"
+
+  root_volume_encryption_enabled = true
+  user_volume_encryption_enabled = true
+  volume_encryption_key          = "alias/aws/workspaces"
+
+  workspace_properties {
+    compute_type_name                         = "${selectedBundle.compute}"
+    user_volume_size_gib                      = 100
+    root_volume_size_gib                      = 175
+    running_mode                              = "${awsRunningMode}"
+    running_mode_auto_stop_timeout_in_minutes = ${awsRunningMode === 'AUTO_STOP' ? 60 : 0}
+  }
+}
+
+output "amazon_workspaces_browser_url" {
+  value = "https://clients.amazonworkspaces.com/webclient"
+}`;
+
+  const awsCliCommandsScript = `#!/usr/bin/env bash
+# AWS CLI Script: Deploy & Enable Amazon WorkSpaces on Browser (WSP Web Access) in ${awsRegion}
+set -euo pipefail
+export AWS_DEFAULT_REGION="${awsRegion}"
+
+# 1. Register your AWS Directory with Amazon WorkSpaces
+aws workspaces register-workspace-directory \\
+  --directory-id d-9267481a2b \\
+  --subnet-ids subnet-0a1b2c3d4e subnet-0f5e6d7c8b \\
+  --enable-work-docs false
+
+# 2. CRITICAL: Enable Browser Web Access (DeviceTypeWeb=ALLOW) on the Directory
+aws workspaces modify-workspace-access-properties \\
+  --resource-id d-9267481a2b \\
+  --workspace-access-properties \\
+    DeviceTypeWeb=ALLOW,DeviceTypeOsx=ALLOW,DeviceTypeWindows=ALLOW,DeviceTypeLinux=ALLOW
+
+# 3. Enable Bi-Directional Clipboard & WebRTC WSP Streaming Policies
+aws workspaces create-workspaces \\
+  --workspaces '[{
+    "DirectoryId": "d-9267481a2b",
+    "UserName": "ws-admin",
+    "BundleId": "${selectedBundle.id}",
+    "VolumeEncryptionKey": "alias/aws/workspaces",
+    "UserVolumeEncryptionEnabled": true,
+    "RootVolumeEncryptionEnabled": true,
+    "WorkspaceProperties": {
+      "RunningMode": "${awsRunningMode}",
+      "RunningModeAutoStopTimeoutInMinutes": 60,
+      "RootVolumeSizeGib": 175,
+      "UserVolumeSizeGib": 100,
+      "ComputeTypeName": "${selectedBundle.compute}",
+      "Protocols": ["WSP"]
+    }
+  }]'
+
+# 4. Fetch Registration Code & Open Browser Web Client
+aws workspaces describe-workspace-directories \\
+  --directory-ids d-9267481a2b \\
+  --query "Directories[0].{RegistrationCode:RegistrationCode,WebAccess:WorkspaceAccessProperties.DeviceTypeWeb}"
+echo "Open Browser Client: https://clients.amazonworkspaces.com/webclient"`;
+
+  const awsWorkSpacesWebPortalYaml = `AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Amazon WorkSpaces Secure Browser (AWS::WorkSpacesWeb::Portal) CloudFormation Stack'
+Resources:
+  SecureBrowserPortal:
+    Type: AWS::WorkSpacesWeb::Portal
+    Properties:
+      DisplayName: 'EdgeDocker & Mercor Browser Workspace Portal'
+      AuthenticationType: Standard
+      BrowserType: Chrome
+
+  SecureBrowserNetworkSettings:
+    Type: AWS::WorkSpacesWeb::NetworkSettings
+    Properties:
+      VpcId: !Ref WorkSpacesVPC
+      SubnetIds: [!Ref PrivateSubnetAZ1, !Ref PrivateSubnetAZ2]
+      SecurityGroupIds: [!Ref WorkSpacesSecurityGroup]
+
+  SecureBrowserSettings:
+    Type: AWS::WorkSpacesWeb::BrowserSettings
+    Properties:
+      BrowserPolicy: |
+        {
+          "chromePolicies": {
+            "ClipboardAllowedForUrls": { "Value": ["*"] },
+            "DownloadRestrictions": { "Value": 0 }
+          }
+        }
+
+Outputs:
+  WorkSpacesWebPortalEndpoint:
+    Description: Direct Browser Streaming Portal URL
+    Value: !GetAtt SecureBrowserPortal.PortalEndpoint`;
+
+  const activeAwsStackCode =
+    awsStackTab === 'cloudformation'
+      ? awsCloudFormationTemplate
+      : awsStackTab === 'terraform'
+      ? awsTerraformConfig
+      : awsStackTab === 'aws-cli'
+      ? awsCliCommandsScript
+      : awsWorkSpacesWebPortalYaml;
+
+  const handleCopyAwsStack = (id: string, content: string) => {
+    navigator.clipboard.writeText(content);
+    setAwsCopiedStack(id);
+    setTimeout(() => setAwsCopiedStack(null), 2000);
+  };
+
+  const handleDownloadAwsStack = () => {
+    const ext =
+      awsStackTab === 'cloudformation'
+        ? 'aws-workspaces-browser-stack.yaml'
+        : awsStackTab === 'terraform'
+        ? 'main.tf'
+        : awsStackTab === 'aws-cli'
+        ? 'deploy-workspaces-browser.sh'
+        : 'aws-workspaces-web-portal.yaml';
+    const blob = new Blob([activeAwsStackCode], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = ext;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   // Live telemetry jitter
   useEffect(() => {
@@ -1015,7 +1321,7 @@ export const RemoteDesktopView: React.FC = () => {
         activeVdiId === 'aws-workspaces'
           ? 'ws-user@ws-x11-ubuntu24:~/workspace$'
           : activeVdiId === 'm365-win11'
-          ? 'PS C:\\Users\\corp-admin\\Projects>'
+          ? 'aws-admin@ws-9f84c2a10 D:\\AWS-WorkSpaces-Stack>'
           : 'dev-m4max@mac2-m4max-sequoia ~/Projects %';
 
       let outputLines: string[] = [];
@@ -1048,25 +1354,87 @@ export const RemoteDesktopView: React.FC = () => {
           '|  0%   42C    P0             34W /   72W |    4120MiB /  23034MiB |     32%      Default |',
           '+-----------------------------------------------------------------------------------------+'
         ];
-      } else if (lower.includes('get-process') || lower.includes('tasklist')) {
+      } else if (lower.includes('describe-workspaces') || lower.includes('modify-workspace') || lower.includes('aws workspaces')) {
         outputLines = [
-          'Handles  NPM(K)    PM(K)      WS(K)     CPU(s)     Id  SI ProcessName',
-          '-------  ------    -----      -----     ------     --  -- -----------',
-          '   1420      88   214800     268400      18.42   1204   1 dwm',
-          '   2310     124   318400     392100      24.15   4410   1 explorer',
-          '   3190     195  1284000    1482900      94.80   8842   1 devenv',
-          '    840      48   112400     142600       4.12   9120   1 pwsh'
+          '{',
+          '  "WorkspaceId": "ws-9f84c2a10",',
+          '  "DirectoryId": "d-9267481a2b",',
+          '  "BundleId": "' + selectedBundle.id + ' (' + selectedBundle.spec + ')",',
+          '  "WorkspaceAccessProperties": { "DeviceTypeWeb": "ALLOW", "Protocols": ["WSP"] },',
+          '  "BrowserClientUrl": "https://clients.amazonworkspaces.com/webclient#/session/ws-9f84c2a10",',
+          '  "RegistrationCode": "WSP+' + awsRegion + '+9XK4P2",',
+          '  "State": "AVAILABLE"',
+          '}'
+        ];
+      } else if (lower.includes('cloudformation') || lower.includes('terraform')) {
+        outputLines = [
+          '[AWS CloudFormation / Terraform] Validating aws-workspaces-browser-stack.yaml...',
+          'CREATE_COMPLETE  AWS::EC2::VPC                        WorkSpacesVPC',
+          'CREATE_COMPLETE  AWS::DirectoryService::MicrosoftAD   WorkSpacesDirectory (d-9267481a2b)',
+          'CREATE_COMPLETE  AWS::WorkSpaces::IpGroup             WorkSpacesBrowserIpGroup (0.0.0.0/0)',
+          'CREATE_COMPLETE  AWS::WorkSpaces::Workspace           BrowserEnabledWorkSpace (ws-9f84c2a10)',
+          'Outputs: WorkSpacesWebAccessUrl = https://clients.amazonworkspaces.com/webclient'
+        ];
+      } else if (lower.includes('launchctl') && (lower.includes('bootstrap') || lower.includes('enable') || lower.includes('print') || lower.includes('list'))) {
+        outputLines = [
+          '[launchctl bootstrap gui/501] Bootstrapping ~/Library/LaunchAgents/com.bvnc.macconsole.plist...',
+          '  -> Domain: gui/501 (Aqua WindowServer Session Attached)',
+          '  -> Service Label: com.bvnc.macconsole (State: running, PID: 41209)',
+          '  -> Binary: /System/Library/CoreServices/RemoteManagement/AppleVNCServer.bundle/Contents/MacOS/AppleVNCServer',
+          '  -> Local Port: 127.0.0.1:5900 (Secure Loopback RFB 3.8)',
+          '  -> Ready for bVNC over SSH Tunnel: ssh -L 5900:127.0.0.1:5900 dev-m4max@mac2-m4max-sequoia.local'
+        ];
+      } else if (lower.includes('dcv') && (lower.includes('create-session') || lower.includes('describe-sessions') || lower.includes('list-endpoints') || lower.includes('server'))) {
+        outputLines = [
+          '[Amazon DCV Server 2024.0 (macOS arm64e Metal 3 VideoToolbox)]',
+          '{',
+          '  "sessions": [{',
+          '    "id": "console",',
+          '    "owner": "dev-m4max",',
+          '    "type": "console",',
+          '    "state": "RUNNING",',
+          '    "display": "2880x1620 (Retina HiDPI @ 120Hz)",',
+          '    "web-port": 8443,',
+          '    "quic-enabled": true,',
+          '    "browser-url": "https://mac2-m4max-sequoia.local:8443#console",',
+          '    "clients": [{ "client-id": "webrtc-dcv-01", "ip": "127.0.0.1", "transport": "QUIC/UDP" }]',
+          '  }]',
+          '}'
+        ];
+      } else if (lower.includes('ssh') && (lower.includes('5900') || lower.includes('-l') || lower.includes('tunnel'))) {
+        outputLines = [
+          '[SSH Port Forwarding Established]',
+          'Local Port Forward: 127.0.0.1:5900 -> remote mac2-m4max-sequoia.local:5900',
+          'Authenticated: dev-m4max via SSH Ed25519 key on port 22',
+          'bVNC Client Channel: Active and accepting connections on localhost:5900'
+        ];
+      } else if (lower.includes('setup-amazon-dcv') || lower.includes('setup_dcv')) {
+        outputLines = [
+          '🚀 [Amazon DCV Installer] Downloading nice-dcv-server-macos-arm64.pkg...',
+          '📦 Installing DCV Server into /Library/LaunchDaemons/com.nicesoftware.dcvserver.plist...',
+          '⚙️  Writing /etc/dcv/dcv.conf (web-port=8443, quic=true, resolution=2880x1620)...',
+          '🔄 sudo launchctl bootstrap system /Library/LaunchDaemons/com.nicesoftware.dcvserver.plist',
+          '🖥️  sudo dcv create-session --type console --owner dev-m4max console',
+          '✅ Amazon DCV Server is ACTIVE on https://mac2-m4max-sequoia.local:8443#console'
+        ];
+      } else if (lower.includes('systemsetup') && lower.includes('remotelogin')) {
+        outputLines = [
+          'Remote Login (SSH): On',
+          'OpenSSH_9.8p1, LibreSSL 3.3.6',
+          'sshd listening on 0.0.0.0:22 (system/com.openssh.sshd)'
         ];
       } else if (lower.includes('sw_vers') || lower.includes('sysctl') || lower.includes('system_profiler')) {
         outputLines = [
           'ProductName:            macOS Sequoia',
           'ProductVersion:         15.3 (24D60)',
           'Kernel:                 Darwin 24.3.0 arm64e (Apple M4 Max)',
-          'WindowServer:           Quartz Compositor Metal 3 (2880x1620 @ 120Hz)'
+          'WindowServer:           Quartz Compositor Metal 3 (2880x1620 @ 120Hz)',
+          'Amazon DCV Server:      Active on :8443 (QUIC/WebRTC)',
+          'bVNC Console Service:   Bootstrapped via launchctl gui/501 on :5900'
         ];
       } else if (lower.startsWith('ls') || lower.startsWith('dir')) {
         const files = FILESYSTEM_BY_VDI[activeVdiId][currentPathByVdi[activeVdiId]] || [];
-        outputLines = files.map((f) => `${f.permissions.padEnd(11)} ${f.size.padStart(9)}  ${f.modified.padEnd(14)}  ${f.name}`);
+        outputLines = files.map((f) => `${f.permissions.padEnd(14)} ${f.size.padStart(9)}  ${f.modified.padEnd(14)}  ${f.name}`);
       } else {
         outputLines = [
           `[Executed on ${activeVdi.hostname} (${activeVdi.windowSystem})]: ${raw}`,
@@ -1081,7 +1449,7 @@ export const RemoteDesktopView: React.FC = () => {
       if (!customCmd) setCommandInput('');
       focusWindow(activeVdiId, 'terminal');
     },
-    [commandInput, activeVdiId, activeVdi, currentPathByVdi, focusWindow]
+    [commandInput, activeVdiId, activeVdi, currentPathByVdi, focusWindow, selectedBundle, awsRegion]
   );
 
   // Run code from IDE window into Terminal window
@@ -1090,8 +1458,8 @@ export const RemoteDesktopView: React.FC = () => {
       activeVdiId === 'aws-workspaces'
         ? 'python3 x11_window_pipeline.py'
         : activeVdiId === 'm365-win11'
-        ? 'dotnet run --project CloudDesktopService.csproj'
-        : 'swift run MacWorkspaceApp';
+        ? 'aws cloudformation deploy --template-file aws-workspaces-browser-stack.yaml --stack-name amazon-workspaces-browser-vdi'
+        : './launchctl-bootstrap-bvnc-console.sh';
     const out =
       activeVdiId === 'aws-workspaces'
         ? [
@@ -1102,24 +1470,28 @@ export const RemoteDesktopView: React.FC = () => {
           ]
         : activeVdiId === 'm365-win11'
         ? [
-            'Build succeeded. 0 Warning(s), 0 Error(s).',
-            '[DWM] Enumerated 4 active Win32 Desktop Windows on DISPLAY1 (2560x1440)',
-            '  -> HWND_0x001408A2 | File Explorer | SnapZone: TopLeft',
-            '  -> HWND_0x002904F0 | Windows PowerShell 7.4 | SnapZone: TopRight'
+            'Waiting for changeset to be created..',
+            'Waiting for stack create/update to complete',
+            'Successfully created/updated stack - amazon-workspaces-browser-vdi',
+            '  -> DirectoryId: d-9267481a2b (DeviceTypeWeb=ALLOW)',
+            '  -> WorkSpaceId: ws-9f84c2a10 (' + selectedBundle.spec + ')',
+            '  -> Browser Client URL: https://clients.amazonworkspaces.com/webclient#/session/ws-9f84c2a10'
           ]
         : [
-            'Building for debugging... [arm64-apple-macosx15.0]',
-            'Build complete! (0.41s)',
-            '[Quartz WindowServer] Metal 3 Device: Apple M4 Max (40-Core GPU)',
-            '  -> Window #1402 [Finder] Bounds: {0, 28, 1440, 800} StageCluster: 1',
-            '  -> Window #1408 [iTerm2] Bounds: {1440, 28, 1440, 800} StageCluster: 1'
+            '[Executing macOS Console Bootstrap for bVNC & Amazon DCV]',
+            '1. Remote Login (SSH) enabled: sshd listening on 0.0.0.0:22',
+            '2. Screen Sharing configured with legacy RFB credentials for bVNC',
+            '3. launchctl bootstrap gui/501 ~/Library/LaunchAgents/com.bvnc.macconsole.plist (Return code: 0 OK)',
+            '4. AppleVNCServer bound to Aqua WindowServer framebuffer on 127.0.0.1:5900',
+            '5. Amazon DCV Server running: https://mac2-m4max-sequoia.local:8443#console',
+            'Ready for bVNC connection over SSH: ssh -L 5900:127.0.0.1:5900 dev-m4max@mac2-m4max-sequoia.local'
           ];
 
     const promptPrefix =
       activeVdiId === 'aws-workspaces'
         ? 'ws-user@ws-x11-ubuntu24:~/workspace$'
         : activeVdiId === 'm365-win11'
-        ? 'PS C:\\Users\\corp-admin\\Projects>'
+        ? 'aws-admin@ws-9f84c2a10 D:\\AWS-WorkSpaces-Stack>'
         : 'dev-m4max@mac2-m4max-sequoia ~/Projects %';
 
     setTerminalLogs((prev) => ({
@@ -1127,7 +1499,7 @@ export const RemoteDesktopView: React.FC = () => {
       [activeVdiId]: [...prev[activeVdiId], `${promptPrefix} ${cmd}`, ...out]
     }));
     focusWindow(activeVdiId, 'terminal');
-  }, [activeVdiId, focusWindow]);
+  }, [activeVdiId, focusWindow, selectedBundle]);
 
   // Backing canvas renderer for .mp4 desktop recording of the actual OS windows
   useEffect(() => {
@@ -1317,19 +1689,19 @@ export const RemoteDesktopView: React.FC = () => {
     const selectedFile = selectedFileByVdi[vdiId];
 
     if (winId === 'terminal') {
-      const isWin = vdiId === 'm365-win11';
+      const isAwsBrowser = vdiId === 'm365-win11';
       const isMac = vdiId === 'macos-15-mchip';
       const quickCmds =
         vdiId === 'aws-workspaces'
           ? ['xrandr', 'wmctrl -l', 'nvidia-smi', 'ls -la']
-          : isWin
-          ? ['Get-Process', 'dir', 'Clear']
+          : isAwsBrowser
+          ? ['aws workspaces describe-workspaces', 'aws cloudformation deploy', 'terraform apply', 'dir']
           : ['sw_vers', 'sysctl -n machdep.cpu.brand_string', 'ls -la'];
 
       return (
         <div
           className={`flex flex-col h-full font-mono text-xs ${
-            isWin ? 'bg-[#012456] text-slate-100' : isMac ? 'bg-[#10141d] text-emerald-100' : 'bg-[#090d14] text-slate-200'
+            isAwsBrowser ? 'bg-[#0b1528] text-slate-100' : isMac ? 'bg-[#10141d] text-emerald-100' : 'bg-[#090d14] text-slate-200'
           }`}
         >
           {/* Quick Command Chips */}
@@ -1337,8 +1709,8 @@ export const RemoteDesktopView: React.FC = () => {
             <span className="text-[10px] text-slate-400">
               {vdiId === 'aws-workspaces'
                 ? 'XTerm • DISPLAY=:0.0'
-                : isWin
-                ? 'Windows PowerShell 7.4 (Admin)'
+                : isAwsBrowser
+                ? 'AWS WorkSpaces WSP Browser CLI (ws-9f84c2a10)'
                 : 'iTerm2 • zsh 5.9 (arm64e)'}
             </span>
             <div className="flex items-center gap-1 flex-wrap">
@@ -1363,8 +1735,8 @@ export const RemoteDesktopView: React.FC = () => {
                   key={i}
                   className={
                     isPrompt
-                      ? isWin
-                        ? 'text-yellow-300 font-semibold'
+                      ? isAwsBrowser
+                        ? 'text-sky-300 font-semibold'
                         : 'text-emerald-400 font-semibold'
                       : 'text-slate-300 whitespace-pre-wrap'
                   }
@@ -1379,13 +1751,13 @@ export const RemoteDesktopView: React.FC = () => {
           {vdiId === activeVdiId && (
             <form onSubmit={handleRunCommand} className="px-3 py-2 border-t border-white/10 bg-black/40 flex items-center gap-2">
               <span className="text-[11px] text-emerald-400 shrink-0">
-                {vdiId === 'aws-workspaces' ? 'ws-user@x11:$' : isWin ? 'PS C:\\>' : 'dev-m4max %'}
+                {vdiId === 'aws-workspaces' ? 'ws-user@x11:$' : isAwsBrowser ? 'aws-wsp>' : 'dev-m4max %'}
               </span>
               <input
                 type="text"
                 value={commandInput}
                 onChange={(e) => setCommandInput(e.target.value)}
-                placeholder="Type command (e.g., ls -la, xrandr, nvidia-smi, Get-Process)..."
+                placeholder="Type command (e.g., aws workspaces describe-workspaces, cloudformation, xrandr)..."
                 className="flex-1 bg-transparent text-xs text-white focus:outline-none"
               />
               <button
@@ -1486,7 +1858,7 @@ export const RemoteDesktopView: React.FC = () => {
               )}
 
               <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                <span>{vdiId === 'aws-workspaces' ? 'ext4 / NVMe' : vdiId === 'm365-win11' ? 'NTFS / BitLocker' : 'APFS (Encrypted)'}</span>
+                <span>{vdiId === 'aws-workspaces' ? 'ext4 / NVMe' : vdiId === 'm365-win11' ? 'EBS gp3 (KMS)' : 'APFS (Encrypted)'}</span>
                 <span>RW</span>
               </div>
             </div>
@@ -1505,7 +1877,7 @@ export const RemoteDesktopView: React.FC = () => {
                 {vdiId === 'aws-workspaces'
                   ? 'x11_window_pipeline.py'
                   : vdiId === 'm365-win11'
-                  ? 'CloudDesktopService.cs'
+                  ? 'aws-workspaces-browser-stack.yaml'
                   : 'MetalComputeEngine.swift'}
               </span>
             </div>
@@ -1514,7 +1886,7 @@ export const RemoteDesktopView: React.FC = () => {
               className="flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold transition-colors"
             >
               <Play className="w-3 h-3" />
-              Build & Run in Terminal
+              {vdiId === 'm365-win11' ? 'Deploy AWS Stack in Terminal' : 'Build & Run in Terminal'}
             </button>
           </div>
           <textarea
@@ -1527,7 +1899,7 @@ export const RemoteDesktopView: React.FC = () => {
       );
     }
 
-    // Monitor Window (NVIDIA X Server Settings / Windows 11 Task Manager / macOS Activity Monitor)
+    // Monitor Window (NVIDIA X Server Settings / AWS WorkSpaces WSP Telemetry / macOS Activity Monitor)
     return (
       <div className="p-3 h-full bg-[#0d131f] text-slate-200 text-xs overflow-y-auto space-y-3">
         <div className="grid grid-cols-3 gap-2">
@@ -1555,7 +1927,7 @@ export const RemoteDesktopView: React.FC = () => {
           </div>
 
           <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800">
-            <div className="text-[10px] text-slate-400 uppercase font-semibold">GPU / Compositor</div>
+            <div className="text-[10px] text-slate-400 uppercase font-semibold">GPU / WSP Encoder</div>
             <div className="text-lg font-bold text-emerald-400 font-mono mt-0.5">{vdi.gpuLoad}%</div>
             <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mt-1">
               <div className="h-full bg-emerald-400 transition-all duration-300" style={{ width: `${vdi.gpuLoad}%` }} />
@@ -1590,16 +1962,16 @@ export const RemoteDesktopView: React.FC = () => {
             {vdiId === 'm365-win11' && (
               <>
                 <div className="px-3 py-1.5 flex justify-between">
-                  <span className="text-sky-300">dwm.exe (Desktop Window Manager • Aero Mica)</span>
-                  <span className="text-slate-400">PID 1204 • 4.8% GPU</span>
+                  <span className="text-sky-300">wsp-host-service.exe (Amazon WSP 2.0 WebRTC H.264 Streamer)</span>
+                  <span className="text-slate-400">PID 1840 • 4.2% GPU</span>
                 </div>
                 <div className="px-3 py-1.5 flex justify-between">
-                  <span className="text-cyan-300">explorer.exe (Windows 11 Shell & Taskbar)</span>
-                  <span className="text-slate-400">PID 4410 • 312 MB</span>
+                  <span className="text-cyan-300">dcv-webrtc-gateway.dll (HTTPS 443 / UDP 4195 Browser Transport)</span>
+                  <span className="text-slate-400">PID 2190 • 228 MB</span>
                 </div>
                 <div className="px-3 py-1.5 flex justify-between">
-                  <span className="text-purple-300">devenv.exe (Visual Studio 2022 Enterprise)</span>
-                  <span className="text-slate-400">PID 8842 • 1,420 MB</span>
+                  <span className="text-emerald-300">aws-cli / cloudformation-stack-agent (Directory d-9267481a2b)</span>
+                  <span className="text-slate-400">PID 5412 • 194 MB</span>
                 </div>
               </>
             )}
@@ -1625,10 +1997,10 @@ export const RemoteDesktopView: React.FC = () => {
     );
   };
 
-  // Render OS Window Frame with authentic decorations per OS (X11 Xfwm4, Windows 11 Fluent, macOS Sequoia Traffic Lights)
+  // Render OS Window Frame with authentic decorations per OS (X11 Xfwm4, Amazon WorkSpaces Browser WSP, macOS Sequoia Traffic Lights)
   const renderOsWindowFrame = (vdiId: VdiProviderId, win: WindowState) => {
     const isX11 = vdiId === 'aws-workspaces';
-    const isWin11 = vdiId === 'm365-win11';
+    const isAwsBrowser = vdiId === 'm365-win11';
     const isMac = vdiId === 'macos-15-mchip';
 
     return (
@@ -1641,7 +2013,7 @@ export const RemoteDesktopView: React.FC = () => {
         } ${
           isX11
             ? 'border-amber-500/40 bg-[#0c1017]'
-            : isWin11
+            : isAwsBrowser
             ? 'border-sky-500/40 bg-[#0f172a]'
             : 'border-white/20 bg-[#141824]'
         }`}
@@ -1690,10 +2062,12 @@ export const RemoteDesktopView: React.FC = () => {
           </div>
         )}
 
-        {isWin11 && (
-          <div className="pl-3 pr-1 py-1 bg-[#1e293b] border-b border-slate-700/80 flex items-center justify-between select-none">
+        {isAwsBrowser && (
+          <div className="pl-3 pr-1 py-1 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] border-b border-sky-500/30 flex items-center justify-between select-none">
             <div className="flex items-center gap-2 min-w-0">
-              <LayoutGrid className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+              <span className="px-1.5 py-0.2 rounded bg-sky-500/20 border border-sky-400/40 text-[9px] font-mono text-sky-300">
+                AWS WSP
+              </span>
               <span className="text-[11px] font-medium text-slate-100 truncate">{win.title}</span>
             </div>
             <div className="flex items-center shrink-0">
@@ -1770,7 +2144,7 @@ export const RemoteDesktopView: React.FC = () => {
     );
   };
 
-  // Render the complete OS Desktop Workspace for a given VDI (Linux X11, Windows 11, or macOS 15 Sequoia)
+  // Render the complete OS Desktop Workspace for a given VDI (Linux X11, Amazon WorkSpaces on Browser, or macOS 15 Sequoia)
   const renderCompleteOsDesktop = (vdiId: VdiProviderId, compact = false) => {
     const vdi = vdiMap[vdiId];
     const wins = windowsByVdi[vdiId];
@@ -1936,43 +2310,52 @@ export const RemoteDesktopView: React.FC = () => {
       );
     }
 
-    // 2. WINDOWS 11 ENTERPRISE FULL DESKTOP (Microsoft 365 Cloud PC)
+    // 2. AMAZON WORKSPACES ON BROWSER — WEB ACCESS (WSP 2.0 HTML5 / WEBRTC CLIENT)
     if (vdiId === 'm365-win11') {
       return (
-        <div className="relative flex flex-col h-full w-full bg-gradient-to-br from-[#082f49] via-[#0f172a] to-[#1e3a8a] select-none overflow-hidden rounded-xl border border-sky-500/30">
-          {/* Windows 11 Top Snap Bar Assist */}
-          <div className="h-7 px-3 bg-slate-950/60 backdrop-blur-md border-b border-sky-500/20 flex items-center justify-between text-[11px] text-sky-200">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-white">Windows 11 Enterprise (Cloud PC)</span>
-              <span className="text-slate-400">•</span>
-              <span className="font-mono text-[10px] text-sky-300">{vdi.hostname}</span>
+        <div className="relative flex flex-col h-full w-full bg-gradient-to-br from-[#082f49] via-[#0f172a] to-[#1e293b] select-none overflow-hidden rounded-xl border border-sky-500/40">
+          {/* Simulated Chrome/Edge Browser Chrome + Amazon WorkSpaces Web Access URL Bar */}
+          <div className="px-3 py-1.5 bg-[#070d19] border-b border-sky-500/30 flex flex-wrap items-center justify-between gap-2 text-[11px] text-sky-200">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <span className="px-2 py-0.5 rounded bg-amber-500/20 border border-amber-400/40 text-[10px] font-mono font-bold text-amber-300 shrink-0">
+                AWS WorkSpaces Web Access
+              </span>
+              <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-slate-900 border border-slate-700 font-mono text-[10px] text-emerald-300 truncate max-w-xl">
+                <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" />
+                <span className="truncate">https://clients.amazonworkspaces.com/webclient#/session/ws-9f84c2a10?region={awsRegion}&amp;protocol=WSP</span>
+              </div>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-slate-300 mr-1">Snap Layouts:</span>
+              <button
+                onClick={() => setShowAwsConfigStack((v) => !v)}
+                className="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-[10px] font-bold text-amber-200"
+              >
+                {showAwsConfigStack ? 'Hide AWS Stack YAML/TF' : 'Show AWS Stack YAML/TF'}
+              </button>
               <button
                 onClick={() => arrangeWindows('m365-win11', 'tiled-2x2')}
                 className="px-2 py-0.5 rounded bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 text-[10px] text-sky-200"
               >
-                4-Quadrant Grid
+                4-Quadrant WSP Grid
               </button>
               <button
                 onClick={() => arrangeWindows('m365-win11', 'maximized')}
                 className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[10px] text-slate-200"
               >
-                Maximize Foreground
+                Maximize Active
               </button>
             </div>
           </div>
 
-          {/* Windows 11 Desktop Surface: Left Desktop Icons + Win32 Window Workspace */}
+          {/* Amazon WorkSpaces Browser Desktop Surface: Left Shortcut Icons + WSP Windows */}
           <div className="flex-1 flex overflow-hidden p-3 gap-3 relative">
             {!compact && (
               <div className="w-20 shrink-0 flex flex-col gap-3 items-center pt-1">
                 {[
-                  { id: 'files' as DesktopWindowId, label: 'This PC', icon: Folder, color: 'text-amber-400' },
-                  { id: 'terminal' as DesktopWindowId, label: 'PowerShell', icon: Terminal, color: 'text-sky-400' },
-                  { id: 'ide' as DesktopWindowId, label: 'Visual Studio', icon: Code2, color: 'text-purple-400' },
-                  { id: 'monitor' as DesktopWindowId, label: 'Task Manager', icon: Activity, color: 'text-emerald-400' }
+                  { id: 'files' as DesktopWindowId, label: 'AWS Stack Files', icon: Folder, color: 'text-amber-400' },
+                  { id: 'terminal' as DesktopWindowId, label: 'AWS CLI Shell', icon: Terminal, color: 'text-sky-400' },
+                  { id: 'ide' as DesktopWindowId, label: 'CFN / TF Studio', icon: Code2, color: 'text-purple-400' },
+                  { id: 'monitor' as DesktopWindowId, label: 'WSP Telemetry', icon: Activity, color: 'text-emerald-400' }
                 ].map((item) => {
                   const Icon = item.icon;
                   return (
@@ -1996,7 +2379,7 @@ export const RemoteDesktopView: React.FC = () => {
               </div>
             )}
 
-            {/* Win32 DWM Window Area */}
+            {/* WSP Browser Window Area */}
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-3 overflow-y-auto">
               {maximizedWin ? (
                 <div className="lg:col-span-2 h-full">{renderOsWindowFrame('m365-win11', maximizedWin)}</div>
@@ -2004,24 +2387,24 @@ export const RemoteDesktopView: React.FC = () => {
                 openWindows.map((w) => renderOsWindowFrame('m365-win11', w))
               ) : (
                 <div className="lg:col-span-2 flex flex-col items-center justify-center text-slate-300 py-16">
-                  <LayoutGrid className="w-8 h-8 text-sky-400 mb-2" />
-                  <p className="text-sm font-semibold text-white">Windows 11 Desktop Clean View</p>
+                  <Globe className="w-8 h-8 text-sky-400 mb-2" />
+                  <p className="text-sm font-semibold text-white">Amazon WorkSpaces Browser Session (ws-9f84c2a10)</p>
                   <button
                     onClick={() => arrangeWindows('m365-win11', 'tiled-2x2')}
                     className="mt-3 px-3 py-1.5 rounded-lg bg-sky-500 text-slate-950 text-xs font-bold"
                   >
-                    Snap All 4 Windows
+                    Restore All 4 WorkSpaces Windows
                   </button>
                 </div>
               )}
             </div>
 
-            {/* Windows 11 Start Menu Popup */}
+            {/* Amazon WorkSpaces Session Menu Popup */}
             {win11StartOpen && (
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-80 rounded-xl bg-slate-900/95 backdrop-blur-xl border border-sky-500/40 shadow-2xl p-4 z-50">
                 <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-slate-800">
-                  <span className="text-xs font-bold text-white">Windows 11 Enterprise • Pinned Apps</span>
-                  <span className="text-[10px] font-mono text-sky-400">corp-admin</span>
+                  <span className="text-xs font-bold text-white">Amazon WorkSpaces WSP Menu</span>
+                  <span className="text-[10px] font-mono text-sky-400">ws-9f84c2a10</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {(['files', 'terminal', 'ide', 'monitor'] as DesktopWindowId[]).map((id) => (
@@ -2035,12 +2418,12 @@ export const RemoteDesktopView: React.FC = () => {
                       className="p-2 rounded-lg bg-slate-800/80 hover:bg-sky-500/20 border border-slate-700 text-left text-xs text-slate-200 font-medium"
                     >
                       {id === 'files'
-                        ? 'File Explorer'
+                        ? 'Stack File Explorer'
                         : id === 'terminal'
-                        ? 'PowerShell 7.4'
+                        ? 'AWS CLI & WSP Shell'
                         : id === 'ide'
-                        ? 'Visual Studio 2022'
-                        : 'Task Manager'}
+                        ? 'CloudFormation / TF'
+                        : 'WSP Session Monitor'}
                     </button>
                   ))}
                 </div>
@@ -2048,21 +2431,20 @@ export const RemoteDesktopView: React.FC = () => {
             )}
           </div>
 
-          {/* Windows 11 Centered Fluent Taskbar */}
-          <div className="h-11 px-4 bg-[#0b1324]/95 backdrop-blur-xl border-t border-sky-500/30 flex items-center justify-between z-30">
+          {/* Amazon WorkSpaces WSP Browser Client Status Bar */}
+          <div className="h-10 px-4 bg-[#070d19]/95 backdrop-blur-xl border-t border-sky-500/30 flex items-center justify-between z-30">
             <div className="flex items-center gap-2 text-[10px] text-sky-300 font-mono">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Entra ID Joined</span>
+              <span>Directory: d-9267481a2b (DeviceTypeWeb=ALLOW)</span>
             </div>
 
-            {/* Centered Start & Pinned Taskbar Icons */}
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setWin11StartOpen((v) => !v)}
-                className="px-2.5 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 border border-sky-400/40 text-sky-300 flex items-center gap-1.5 text-xs font-bold"
+                className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-300 flex items-center gap-1.5 text-xs font-bold"
               >
-                <LayoutGrid className="w-3.5 h-3.5" />
-                Start
+                <Globe className="w-3.5 h-3.5" />
+                AWS WSP Menu
               </button>
               {(Object.values(wins) as WindowState[]).map((w) => (
                 <button
@@ -2072,21 +2454,20 @@ export const RemoteDesktopView: React.FC = () => {
                     else if (w.isMinimized) toggleMinimizeWindow('m365-win11', w.id);
                     else focusWindow('m365-win11', w.id);
                   }}
-                  className={`px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
                     w.isOpen && !w.isMinimized
                       ? 'bg-white/15 text-white border-b-2 border-sky-400'
                       : 'text-slate-400 hover:bg-white/10 hover:text-white'
                   }`}
                 >
-                  {w.id === 'files' ? 'Explorer' : w.id === 'terminal' ? 'PowerShell' : w.id === 'ide' ? 'VS 2022' : 'TaskMgr'}
+                  {w.id === 'files' ? 'Stack Files' : w.id === 'terminal' ? 'AWS CLI' : w.id === 'ide' ? 'CFN / TF IaC' : 'WSP Monitor'}
                 </button>
               ))}
             </div>
 
-            {/* System Tray & Clock */}
             <div className="flex items-center gap-3 text-[11px] text-slate-300 font-mono">
               <Wifi className="w-3.5 h-3.5 text-emerald-400" />
-              <span>RDP Shortpath</span>
+              <span>WSP 2.0 WebRTC (HTTPS 443)</span>
               <span>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
           </div>
@@ -2146,11 +2527,30 @@ export const RemoteDesktopView: React.FC = () => {
             </button>
           </div>
 
-          <div className="flex items-center gap-3 text-[11px] font-mono">
-            <span className="px-2 py-0.5 rounded bg-purple-500/20 border border-purple-400/30 text-[10px] text-purple-200">
-              GHA macos-15 • noVNC :6080 • Cloudflare Tunnel
-            </span>
-            <span className="text-purple-300">M4 Max • 120Hz</span>
+          <div className="flex items-center gap-2 text-[11px] font-mono">
+            {/* Amazon DCV Server Indicator */}
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-purple-500/20 border border-purple-400/40 text-[10px] text-purple-200">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>DCV :8443 (QUIC/WebRTC)</span>
+            </div>
+
+            {/* bVNC Console launchctl status */}
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-indigo-500/20 border border-indigo-400/40 text-[10px] text-indigo-200">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span>launchctl gui/501 (bVNC :5900)</span>
+            </div>
+
+            {/* Quick Action: Trigger bootstrap */}
+            <button
+              onClick={() => {
+                handleRunCommand(undefined, './launchctl-bootstrap-bvnc-console.sh');
+              }}
+              className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded bg-purple-600/30 hover:bg-purple-600/50 border border-purple-400/40 text-[10px] text-purple-200 font-bold"
+            >
+              <span>launchctl bootstrap</span>
+            </button>
+
+            <span className="text-purple-300 hidden md:inline">M4 Max • 120Hz</span>
             <span className="text-slate-200">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
           </div>
         </div>
@@ -2268,17 +2668,17 @@ export const RemoteDesktopView: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-base font-bold text-white tracking-tight">
-                Cloud VDI Desktop Workspaces &amp; WebRTC Streamer
+                Cloud VDI Desktop Workspaces &amp; Amazon WorkSpaces Browser Stack
               </h2>
               <span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-mono text-emerald-400">
-                Linux X11 • Windows 11 • macOS 15 Sequoia
+                Linux X11 • Amazon WorkSpaces on Browser (WSP) • macOS 15 Sequoia
               </span>
               <span className="px-2 py-0.5 rounded bg-cyan-500/15 border border-cyan-500/40 text-[10px] font-mono text-cyan-300">
                 ● WebRTC RTCPeerConnection: {webRtcBitrateMbps} Mbps @ 60 FPS
               </span>
             </div>
             <p className="text-xs text-slate-400">
-              Streams Linux X-Windows (X11), Windows 11 Enterprise (Win32 DWM), and Apple Silicon macOS 15 Sequoia over WebRTC &amp; noVNC.
+              Streams Linux X-Windows (X11), Amazon WorkSpaces on Browser (<code className="text-sky-300">clients.amazonworkspaces.com/webclient</code>), and Apple Silicon macOS 15 Sequoia over WebRTC &amp; noVNC.
             </p>
           </div>
         </div>
@@ -2303,6 +2703,18 @@ export const RemoteDesktopView: React.FC = () => {
               All 3 VDI Desktops
             </button>
           </div>
+
+          <button
+            onClick={() => setShowAwsConfigStack((v) => !v)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold transition-all ${
+              showAwsConfigStack
+                ? 'bg-amber-500/25 border-amber-400/60 text-amber-200 shadow-lg shadow-amber-950/40'
+                : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-amber-300'
+            }`}
+          >
+            <Server className="w-3.5 h-3.5 text-amber-400" />
+            <span>AWS WorkSpaces Stack ({showAwsConfigStack ? 'On' : 'Off'})</span>
+          </button>
 
           <button
             onClick={() => setShowWebRtcMonitor((v) => !v)}
@@ -2419,7 +2831,177 @@ export const RemoteDesktopView: React.FC = () => {
         })}
       </div>
 
-      {/* Live WebRTC RTCPeerConnection Desktop Streamer Panel (Linux X11 / Windows 11 / macOS 15 / All-3-OS Matrix) */}
+      {/* AWS CONFIGURATION STACK PANEL FOR AMAZON WORKSPACES ON BROWSER (WSP WEB ACCESS) */}
+      {showAwsConfigStack && (
+        <div className="p-4 rounded-xl bg-slate-900/95 border border-amber-500/40 shadow-xl space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300">
+                <Server className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-sm font-bold text-white">
+                    AWS Configuration Stack — Amazon WorkSpaces on Browser (WSP Web Access)
+                  </h3>
+                  <span className="px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/40 text-[10px] font-mono text-emerald-300">
+                    DeviceTypeWeb=ALLOW • https://clients.amazonworkspaces.com/webclient
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-300">
+                  Complete Infrastructure-as-Code stack (CloudFormation, Terraform, AWS CLI &amp; WorkSpaces Secure Browser Portal) to run Amazon WorkSpaces directly in any HTML5 browser over WSP/WebRTC.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
+              {[
+                { id: 'cloudformation' as const, label: '1. CloudFormation Stack (.yaml)' },
+                { id: 'terraform' as const, label: '2. Terraform HCL (main.tf)' },
+                { id: 'aws-cli' as const, label: '3. AWS CLI Browser Enabler (.sh)' },
+                { id: 'workspaces-web-portal' as const, label: '4. WorkSpaces Web Portal' }
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setAwsStackTab(t.id)}
+                  className={`px-2.5 py-1.5 rounded-md font-semibold transition-all whitespace-nowrap ${
+                    awsStackTab === t.id
+                      ? 'bg-amber-500/25 text-amber-200 border border-amber-500/40'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            {/* Left Column: AWS Stack Parameters & Architecture Checklist */}
+            <div className="lg:col-span-5 space-y-3">
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-3 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold uppercase tracking-wider text-amber-300">
+                    AWS Stack Parameters
+                  </span>
+                  <span className="font-mono text-[10px] text-sky-400">Protocol: WSP 2.0 WebRTC</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-mono text-slate-400 mb-1">AWS Region</label>
+                    <select
+                      value={awsRegion}
+                      onChange={(e) => setAwsRegion(e.target.value)}
+                      className="w-full px-2 py-1.5 rounded bg-slate-900 border border-slate-700 text-white font-mono text-xs"
+                    >
+                      <option value="us-west-2">us-west-2 (Oregon)</option>
+                      <option value="us-east-1">us-east-1 (N. Virginia)</option>
+                      <option value="eu-west-1">eu-west-1 (Ireland)</option>
+                      <option value="ap-southeast-1">ap-southeast-1 (Singapore)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-mono text-slate-400 mb-1">WSP Compute Bundle</label>
+                    <select
+                      value={awsBundleType}
+                      onChange={(e) => setAwsBundleType(e.target.value as 'POWERPRO_WSP' | 'PERFORMANCE_WSP' | 'GRAPHICS_G4DN_WSP')}
+                      className="w-full px-2 py-1.5 rounded bg-slate-900 border border-slate-700 text-white font-mono text-xs"
+                    >
+                      <option value="POWERPRO_WSP">PowerPro (8vCPU / 32GB)</option>
+                      <option value="PERFORMANCE_WSP">Performance (2vCPU / 8GB)</option>
+                      <option value="GRAPHICS_G4DN_WSP">Graphics G4dn (T4 GPU)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-mono text-slate-400 mb-1">Running Mode</label>
+                    <select
+                      value={awsRunningMode}
+                      onChange={(e) => setAwsRunningMode(e.target.value as 'AUTO_STOP' | 'ALWAYS_ON')}
+                      className="w-full px-2 py-1.5 rounded bg-slate-900 border border-slate-700 text-white font-mono text-xs"
+                    >
+                      <option value="AUTO_STOP">AUTO_STOP (Hourly Cost)</option>
+                      <option value="ALWAYS_ON">ALWAYS_ON (Instant)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 space-y-1.5 text-[11px]">
+                  <div className="font-semibold text-sky-300">Required AWS Stack Resources for Browser Access:</div>
+                  <div className="text-slate-300 space-y-1 font-mono text-[10px]">
+                    <div>1. <span className="text-amber-300">AWS::EC2::VPC</span> + 2 Private Subnets in distinct AZs</div>
+                    <div>2. <span className="text-amber-300">AWS::DirectoryService::MicrosoftAD</span> (corp.edge-vdi.aws)</div>
+                    <div>3. <span className="text-emerald-300">WorkspaceAccessProperties.DeviceTypeWeb = ALLOW</span></div>
+                    <div>4. <span className="text-sky-300">AWS::WorkSpaces::Workspace</span> with <span className="text-sky-300">WSP</span> bundle ({selectedBundle.id})</div>
+                    <div>5. Browser Client: <span className="text-cyan-300">https://clients.amazonworkspaces.com/webclient</span></div>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => {
+                      setActiveVdiId('m365-win11');
+                      setIdeCodeByVdi((prev) => ({ ...prev, 'm365-win11': activeAwsStackCode }));
+                      handleRunIdeCode();
+                    }}
+                    className="flex-1 py-2 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-slate-950" />
+                    Load &amp; Deploy Stack in WorkSpaces Browser VDI
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Live Code Viewer with Copy & Download */}
+            <div className="lg:col-span-7 flex flex-col rounded-xl bg-slate-950 border border-slate-800 overflow-hidden">
+              <div className="px-3.5 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between gap-2">
+                <span className="text-xs font-mono font-bold text-amber-300">
+                  {awsStackTab === 'cloudformation'
+                    ? 'aws-workspaces-browser-stack.yaml (AWS CloudFormation)'
+                    : awsStackTab === 'terraform'
+                    ? 'main.tf (HashiCorp Terraform AWS Provider)'
+                    : awsStackTab === 'aws-cli'
+                    ? 'deploy-workspaces-browser.sh (AWS CLI v2)'
+                    : 'aws-workspaces-web-portal.yaml (AWS::WorkSpacesWeb::Portal)'}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleCopyAwsStack(awsStackTab, activeAwsStackCode)}
+                    className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] text-slate-200 flex items-center gap-1"
+                  >
+                    {awsCopiedStack === awsStackTab ? (
+                      <>
+                        <Check className="w-3 h-3 text-emerald-400" />
+                        Copied Stack
+                      </>
+                    ) : (
+                      <>
+                        <Clipboard className="w-3 h-3" />
+                        Copy Stack Code
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={handleDownloadAwsStack}
+                    className="px-2.5 py-1 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[11px] flex items-center gap-1"
+                  >
+                    <Download className="w-3 h-3" />
+                    Download File
+                  </button>
+                </div>
+              </div>
+              <pre className="p-3.5 text-[11px] font-mono text-slate-200 overflow-x-auto max-h-[300px] leading-relaxed select-all">
+                {activeAwsStackCode}
+              </pre>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Live WebRTC RTCPeerConnection Desktop Streamer Panel (Linux X11 / Amazon WorkSpaces on Browser / macOS 15 / All-3-OS Matrix) */}
       {showWebRtcMonitor && (
         <div className="p-4 rounded-xl bg-slate-900/95 border border-cyan-500/40 shadow-xl space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -2435,7 +3017,7 @@ export const RemoteDesktopView: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-300">
-                  Streams the full Linux X-Windows (<code className="text-amber-300">DISPLAY=:0.0</code>), Windows 11 Enterprise (<code className="text-sky-300">Win32 DWM</code>), or macOS 15 Sequoia (<code className="text-purple-300">Quartz Metal 3</code>) desktop over a real <code className="text-cyan-300">RTCPeerConnection</code> video track.
+                  Streams the full Linux X-Windows (<code className="text-amber-300">DISPLAY=:0.0</code>), Amazon WorkSpaces on Browser (<code className="text-sky-300">WSP 2.0 WebRTC</code>), or macOS 15 Sequoia (<code className="text-purple-300">Quartz Metal 3</code>) desktop over a real <code className="text-cyan-300">RTCPeerConnection</code> video track.
                 </p>
               </div>
             </div>
@@ -2444,7 +3026,7 @@ export const RemoteDesktopView: React.FC = () => {
               <span className="text-[11px] text-slate-400 font-semibold mr-1">Share Desktop via WebRTC:</span>
               {[
                 { id: 'linux-x11' as const, label: 'Linux X-Windows (X11)', vdi: 'aws-workspaces' as VdiProviderId, activeClass: 'bg-amber-500/25 border-amber-400 text-amber-200' },
-                { id: 'win11' as const, label: 'Windows 11 Desktop', vdi: 'm365-win11' as VdiProviderId, activeClass: 'bg-sky-500/25 border-sky-400 text-sky-200' },
+                { id: 'win11' as const, label: 'Amazon WorkSpaces (Browser WSP)', vdi: 'm365-win11' as VdiProviderId, activeClass: 'bg-sky-500/25 border-sky-400 text-sky-200' },
                 { id: 'macos-15' as const, label: 'macOS 15 Sequoia', vdi: 'macos-15-mchip' as VdiProviderId, activeClass: 'bg-purple-500/25 border-purple-400 text-purple-200' },
                 { id: 'all-os' as const, label: 'All 3 Desktops (Matrix)', vdi: null, activeClass: 'bg-emerald-500/25 border-emerald-400 text-emerald-200' }
               ].map((btn) => {
@@ -2510,7 +3092,7 @@ export const RemoteDesktopView: React.FC = () => {
                 <span className="text-[10px] font-mono text-emerald-400">ACTIVE</span>
               </div>
               <p className="text-[11px] text-slate-300 leading-relaxed">
-                Switching between <strong>Linux X-Windows (X11)</strong>, <strong>Windows 11</strong>, <strong>macOS 15 Sequoia</strong>, or <strong>All 3 Desktops</strong> updates both this workspace and any open <code className="text-cyan-300">/vnc.html</code> window in real time.
+                Switching between <strong>Linux X-Windows (X11)</strong>, <strong>Amazon WorkSpaces on Browser (WSP)</strong>, <strong>macOS 15 Sequoia</strong>, or <strong>All 3 Desktops</strong> updates both this workspace and any open <code className="text-cyan-300">/vnc.html</code> window in real time.
               </p>
               <div className="flex flex-wrap gap-2 pt-1">
                 <button

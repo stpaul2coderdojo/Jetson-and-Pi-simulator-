@@ -324,6 +324,30 @@ app.get('/api/vnc/verify-tunnel', async (req, res) => {
   }
 });
 
+// Amazon DCV on macOS & launchctl bootstrap for bVNC Configuration Endpoint
+app.get('/api/mac/dcv-bvnc-config', (req, res) => {
+  const user = String(req.query.user || 'dev-m4max');
+  const uid = Number(req.query.uid) || 501;
+  const dcvPort = Number(req.query.dcv_port) || 8443;
+  const vncPort = Number(req.query.vnc_port) || 5900;
+  const sshPort = Number(req.query.ssh_port) || 22;
+
+  res.json({
+    status: 'ok',
+    os: 'macOS 15 Sequoia (arm64e)',
+    user,
+    uid,
+    dcvPort,
+    vncPort,
+    sshPort,
+    launchctlBootstrapCommand: `launchctl bootstrap gui/${uid} ~/Library/LaunchAgents/com.bvnc.macconsole.plist`,
+    bvncSshTunnelCommand: `ssh -N -L ${vncPort}:127.0.0.1:${vncPort} ${user}@mac2-m4max-sequoia.local -p ${sshPort}`,
+    amazonDcvWebUrl: `https://mac2-m4max-sequoia.local:${dcvPort}#console`,
+    dcvCreateSessionCommand: `sudo dcv create-session --type console --owner ${user} console`,
+    remoteLoginCheck: 'sudo systemsetup -getremotelogin'
+  });
+});
+
 // Built-in Live HTML5 noVNC (RFB 3.8) Interactive Desktop & Mercor Screen Share Endpoint
 app.get('/vnc.html', (req, res) => {
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -332,7 +356,7 @@ app.get('/vnc.html', (req, res) => {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>noVNC & WebRTC Streamer — Linux X11 • Windows 11 • macOS 15 Sequoia</title>
+  <title>noVNC & WebRTC Streamer — Linux X11 • Amazon WorkSpaces (Browser WSP) • macOS 15 Sequoia</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -488,8 +512,8 @@ app.get('/vnc.html', (req, res) => {
     <div class="novnc-right">
       <span style="color:#94a3b8;font-weight:600;">Share Desktop:</span>
       <button class="btn" id="btn-os-x11">Linux X-Windows (X11)</button>
-      <button class="btn" id="btn-os-win11">Windows 11 Desktop</button>
-      <button class="btn" id="btn-os-mac">macOS 15 Sequoia</button>
+      <button class="btn" id="btn-os-win11">Amazon WorkSpaces (Browser WSP)</button>
+      <button class="btn" id="btn-os-mac">macOS 15 (DCV &amp; bVNC Console)</button>
       <button class="btn" id="btn-os-all">All 3 Desktops (Matrix)</button>
       <button class="btn btn-webrtc streaming" id="btn-webrtc-toggle">WebRTC Receiver Monitor (On)</button>
       <button class="btn" id="btn-host-capture" title="Optional: Share physical monitor if browser allows">Host Screen (getDisplayMedia)</button>
@@ -514,9 +538,9 @@ app.get('/vnc.html', (req, res) => {
   </div>
   <script>
     const params = new URLSearchParams(window.location.search);
-    const project = params.get('mercor_project') || 'MERCOR-VDI-WEBRTC-01';
+    const project = params.get('mercor_project') || 'MERCOR-AWS-WORKSPACES-01';
     const viewOnly = params.get('view_only') === 'true';
-    let osMode = params.get('os') || 'macos-15'; // 'linux-x11' | 'win11' | 'macos-15' | 'all-os'
+    let osMode = params.get('os') || 'win11'; // 'linux-x11' | 'win11' | 'macos-15' | 'all-os'
 
     document.getElementById('project-label').textContent =
       'Project: ' + project + (viewOnly ? ' [VIEW-ONLY]' : ' [INTERACTIVE]');
@@ -544,9 +568,9 @@ app.get('/vnc.html', (req, res) => {
       document.getElementById('btn-os-all').className = 'btn' + (osMode === 'all-os' ? ' active-all' : '');
       const labelMap = {
         'linux-x11': 'Linux X-Windows (X.Org :0.0)',
-        'win11': 'Windows 11 Enterprise (DWM)',
+        'win11': 'Amazon WorkSpaces on Browser (WSP 2.0)',
         'macos-15': 'macOS 15 Sequoia (Quartz)',
-        'all-os': 'Tri-OS Matrix (X11 + Win11 + macOS)'
+        'all-os': 'Tri-OS Matrix (X11 + AWS Browser WSP + macOS)'
       };
       webrtcTitle.textContent = 'WEBRTC STREAM: ' + (labelMap[osMode] || osMode);
       if (broadcast && bcChannel) {
@@ -590,7 +614,7 @@ app.get('/vnc.html', (req, res) => {
       setTimeout(() => { pointer.clicked = false; }, 180);
     });
 
-    // Real WebRTC RTCPeerConnection loopback streaming the VDI OS Desktop Canvas (X11 / Windows 11 / macOS 15)
+    // Real WebRTC RTCPeerConnection loopback streaming the VDI OS Desktop Canvas (X11 / Amazon WorkSpaces Browser WSP / macOS 15)
     let pcSender = null;
     let pcReceiver = null;
     let webrtcActive = true;
@@ -825,20 +849,20 @@ app.get('/vnc.html', (req, res) => {
       const grad = ctx.createLinearGradient(rx, ry, rx + rw, ry + rh);
       grad.addColorStop(0, '#082f49');
       grad.addColorStop(0.5, '#0f172a');
-      grad.addColorStop(1, '#1e3a8a');
+      grad.addColorStop(1, '#1e293b');
       ctx.fillStyle = grad;
       ctx.fillRect(rx, ry, rw, rh);
 
-      // Windows 11 Top Snap Bar
-      ctx.fillStyle = 'rgba(2, 6, 23, 0.8)';
-      ctx.fillRect(rx, ry, rw, 28);
-      ctx.fillStyle = '#bae6fd';
-      ctx.font = 'bold 12px sans-serif';
-      ctx.fillText('Windows 11 Enterprise (Cloud PC)  •  CPC-ENT-8VCPU  •  Win32 DWM Desktop Window Manager  •  Snap Layouts [2x2]', rx + 14, ry + 18);
+      // Amazon WorkSpaces Browser Web Client Address Bar
+      ctx.fillStyle = 'rgba(2, 6, 23, 0.9)';
+      ctx.fillRect(rx, ry, rw, 30);
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 11px monospace';
+      ctx.fillText('AWS WorkSpaces Web Access  |  https://clients.amazonworkspaces.com/webclient#/session/ws-9f84c2a10  |  DeviceTypeWeb=ALLOW (WSP 2.0)', rx + 14, ry + 19);
 
-      // Win11 Window 1: Windows PowerShell 7.4
-      const w1 = { x: rx + 24, y: ry + 42, w: rw * 0.47, h: rh * 0.43 };
-      ctx.fillStyle = '#0c1425';
+      // Window 1: AWS CLI & WSP Shell
+      const w1 = { x: rx + 24, y: ry + 44, w: rw * 0.47, h: rh * 0.43 };
+      ctx.fillStyle = '#0b1528';
       ctx.fillRect(w1.x, w1.y, w1.w, w1.h);
       ctx.strokeStyle = '#38bdf8';
       ctx.lineWidth = 2;
@@ -846,49 +870,49 @@ app.get('/vnc.html', (req, res) => {
       ctx.fillStyle = '#1e293b';
       ctx.fillRect(w1.x, w1.y, w1.w, 26);
       ctx.fillStyle = '#f8fafc';
-      ctx.font = 'bold 11px sans-serif';
-      ctx.fillText('Administrator: Windows PowerShell 7.4 (Win32 DWM)            ─   ▢   ✕', w1.x + 10, w1.y + 17);
+      ctx.font = 'bold 11px monospace';
+      ctx.fillText('[AWS WSP] AWS CLI & WorkSpaces Shell — ws-9f84c2a10          ─   ▢   ✕', w1.x + 10, w1.y + 17);
 
-      const psLogs = [
-        'PS C:\\Users\\corp-admin\\Projects> Get-Process dwm, explorer, devenv',
-        'Handles  NPM(K)    PM(K)      WS(K)     Id  ProcessName',
-        '   1420      88   214800     268400   1204  dwm',
-        '   2310     124   318400     392100   4410  explorer',
-        '   3190     195  1284000    1482900   8842  devenv',
-        'PS C:\\Users\\corp-admin\\Projects> WebRTC Desktop Capture: ONLINE (60 FPS)'
+      const awsLogs = [
+        'aws-admin@ws-9f84c2a10> aws workspaces describe-workspaces',
+        'WorkspaceId: ws-9f84c2a10 | Bundle: PowerPro 8vCPU/32GB (WSP)',
+        'DirectoryId: d-9267481a2b | DeviceTypeWeb: ALLOW',
+        'Browser URL: https://clients.amazonworkspaces.com/webclient',
+        'Protocol:    Amazon WSP 2.0 over WebRTC (HTTPS 443 / UDP 4195)',
+        'Status:      AVAILABLE • Streaming 60 FPS'
       ];
       ctx.font = '11px monospace';
-      psLogs.forEach((l, i) => {
-        ctx.fillStyle = l.startsWith('PS ') ? '#38bdf8' : '#e2e8f0';
+      awsLogs.forEach((l, i) => {
+        ctx.fillStyle = l.startsWith('aws-admin') ? '#38bdf8' : '#e2e8f0';
         ctx.fillText(l.slice(0, 68), w1.x + 12, w1.y + 46 + i * 20);
       });
 
-      // Win11 Window 2: Visual Studio 2022
-      const w2 = { x: rx + rw * 0.51, y: ry + 42, w: rw * 0.47, h: rh * 0.43 };
+      // Window 2: AWS CloudFormation & Terraform Stack Studio
+      const w2 = { x: rx + rw * 0.51, y: ry + 44, w: rw * 0.47, h: rh * 0.43 };
       ctx.fillStyle = '#0c1425';
       ctx.fillRect(w2.x, w2.y, w2.w, w2.h);
-      ctx.strokeStyle = '#818cf8';
+      ctx.strokeStyle = '#f59e0b';
       ctx.strokeRect(w2.x, w2.y, w2.w, w2.h);
       ctx.fillStyle = '#1e293b';
       ctx.fillRect(w2.x, w2.y, w2.w, 26);
-      ctx.fillStyle = '#c7d2fe';
-      ctx.fillText('Visual Studio 2022 — CloudDesktopService.cs                 ─   ▢   ✕', w2.x + 10, w2.y + 17);
+      ctx.fillStyle = '#fde68a';
+      ctx.fillText('AWS CloudFormation & Terraform — aws-workspaces-browser-stack.yaml', w2.x + 10, w2.y + 17);
 
-      const csLines = [
-        'using System; using Windows.Graphics.Capture;',
-        'namespace CloudPcEnterprise {',
-        '  public static class Win11WebRtcBroadcaster {',
-        '    public static void StreamDwmDesktop() =>',
-        '      Console.WriteLine("Streaming Win11 DWM HWND_DESKTOP @ 60fps");',
-        '  }',
-        '}'
+      const cfnLines = [
+        'AWSTemplateFormatVersion: "2010-09-09"',
+        'Resources:',
+        '  WorkSpacesDirectory: # AWS::DirectoryService::MicrosoftAD',
+        '    Properties: { Name: corp.edge-vdi.aws, Edition: Standard }',
+        '  BrowserWorkSpace:    # AWS::WorkSpaces::Workspace (WSP)',
+        '    Properties: { BundleId: wsb-8vbl42p1r, RunningMode: AUTO_STOP }',
+        'Outputs: { WebAccessUrl: "https://clients.amazonworkspaces.com/webclient" }'
       ];
-      csLines.forEach((l, i) => {
-        ctx.fillStyle = '#a5b4fc';
+      cfnLines.forEach((l, i) => {
+        ctx.fillStyle = '#fcd34d';
         ctx.fillText(String(i + 1) + '  ' + l, w2.x + 12, w2.y + 46 + i * 20);
       });
 
-      // Win11 Window 3: File Explorer (This PC) & Task Manager
+      // Window 3: AWS Stack Files & WSP 2.0 Session Telemetry
       const w3 = { x: rx + 24, y: ry + rh * 0.50, w: rw - 48, h: rh * 0.39 };
       ctx.fillStyle = '#0c1425';
       ctx.fillRect(w3.x, w3.y, w3.w, w3.h);
@@ -897,20 +921,25 @@ app.get('/vnc.html', (req, res) => {
       ctx.fillStyle = '#1e293b';
       ctx.fillRect(w3.x, w3.y, w3.w, 26);
       ctx.fillStyle = '#bae6fd';
-      ctx.fillText('File Explorer — C:\\Users\\corp-admin\\Projects  +  Windows 11 Task Manager (DirectX 12)', w3.x + 10, w3.y + 17);
+      ctx.fillText('WorkSpaces Browser File Manager (D:\\AWS-WorkSpaces-Stack)  +  WSP 2.0 WebRTC Telemetry', w3.x + 10, w3.y + 17);
 
-      const winFiles = ['[FOLDER] Enterprise-Agent-Service', '[FOLDER] WinUI3-Dashboard', '[FILE]   CloudDesktopService.csproj (4.2 KB)', '[FILE]   Program.cs (8.9 KB)'];
-      winFiles.forEach((f, i) => {
-        ctx.fillStyle = f.startsWith('[FOLDER]') ? '#fbbf24' : '#e2e8f0';
+      const wsFiles = [
+        '[CFN YAML]  aws-workspaces-browser-stack.yaml (VPC + AD + WorkSpace + IpGroup)',
+        '[TERRAFORM] main.tf (aws_workspaces_directory device_type_web = "ALLOW")',
+        '[AWS CLI]   deploy-workspaces-browser.sh (modify-workspace-access-properties)',
+        '[PORTAL]    aws-workspaces-web-portal.yaml (AWS::WorkSpacesWeb::Portal)'
+      ];
+      wsFiles.forEach((f, i) => {
+        ctx.fillStyle = f.startsWith('[CFN') ? '#fbbf24' : '#e2e8f0';
         ctx.fillText(f, w3.x + 16, w3.y + 52 + i * 22);
       });
 
-      // Windows 11 Centered Fluent Taskbar
+      // Amazon WorkSpaces Browser Status Bar
       ctx.fillStyle = '#070d19';
       ctx.fillRect(rx, ry + rh - 36, rw, 36);
       ctx.fillStyle = '#38bdf8';
-      ctx.font = 'bold 12px sans-serif';
-      ctx.fillText('Entra ID Joined          [ ⊞ Start ]   [ Explorer ]   [ PowerShell 7.4 ]   [ Visual Studio 2022 ]   [ Task Manager ]          RDP Shortpath 60 FPS', rx + 24, ry + rh - 14);
+      ctx.font = 'bold 12px monospace';
+      ctx.fillText('Directory: d-9267481a2b (DeviceTypeWeb=ALLOW)    [ AWS WSP Menu ]  [ Stack Files ]  [ AWS CLI ]  [ CFN/TF IaC ]    WSP 2.0 WebRTC 60 FPS', rx + 20, ry + rh - 14);
 
       ctx.restore();
     }
@@ -933,7 +962,7 @@ app.get('/vnc.html', (req, res) => {
       ctx.fillRect(rx, ry, rw, 28);
       ctx.fillStyle = '#f8fafc';
       ctx.font = 'bold 12px sans-serif';
-      ctx.fillText('  Sequoia 15.3   Finder   File   Edit   View   Window   •   Apple M4 Max (Metal 3 Quartz Compositor)   •   WebRTC + RFB 3.8', rx + 14, ry + 18);
+      ctx.fillText('  Sequoia 15.3   Finder   File   Edit   View   Window   •   Amazon DCV :8443 (QUIC/WebRTC)   •   launchctl bootstrap gui/501 (bVNC SSH :5900)', rx + 14, ry + 18);
 
       // Window 1: iTerm2
       const w1 = { x: rx + 24, y: ry + 42, w: rw * 0.47, h: rh * 0.43 };
@@ -955,12 +984,12 @@ app.get('/vnc.html', (req, res) => {
       ctx.fillText('iTerm2 — zsh (arm64e) — dev-m4max@macos15-sequoia', w1.x + 68, w1.y + 17);
 
       const macLogs = [
-        'dev-m4max@macos15-sequoia ~ % sw_vers',
-        'ProductName:            macOS Sequoia',
-        'ProductVersion:         15.3 (24D60)',
-        'Kernel:                 Darwin 24.3.0 arm64e (Apple M4 Max)',
-        'WindowServer:           Quartz Metal 3 (WebRTC Stream Active)',
-        'dev-m4max@macos15-sequoia ~ % _'
+        'dev-m4max@macos15 ~ % sudo dcv describe-sessions',
+        '{"sessions":[{"id":"console","owner":"dev-m4max","type":"console","port":8443,"quic":true}]}',
+        'dev-m4max@macos15 ~ % launchctl print gui/501/com.bvnc.macconsole | grep state',
+        'state = running (PID 41209) • AppleVNCServer bound to Aqua WindowServer',
+        'dev-m4max@macos15 ~ % echo "[bVNC over SSH] Loopback 127.0.0.1:5900 via ssh -L 5900:127.0.0.1:5900"',
+        'dev-m4max@macos15 ~ % _'
       ];
       ctx.font = '11px monospace';
       macLogs.forEach((l, i) => {
@@ -977,7 +1006,7 @@ app.get('/vnc.html', (req, res) => {
       ctx.fillStyle = '#1e293b';
       ctx.fillRect(w2.x, w2.y, w2.w, 26);
       ctx.fillStyle = '#f3e8ff';
-      ctx.fillText('Xcode 16.2 — MacWorkspaceApp.swift (Metal 3)', w2.x + 14, w2.y + 17);
+      ctx.fillText('Xcode 16.2 — Metal 3 & DCV Quartz Compositor', w2.x + 14, w2.y + 17);
 
       const swiftLines = [
         'import Foundation',
@@ -985,7 +1014,7 @@ app.get('/vnc.html', (req, res) => {
         'final class MacSequoiaWebRtcDesktop {',
         '  func captureQuartzWorkspace() -> String {',
         '    guard let gpu = MTLCreateSystemDefaultDevice() else { return "" }',
-        '    return "Streaming \\(gpu.name) Quartz Desktop via WebRTC"',
+        '    return "Streaming \\(gpu.name) Quartz Desktop via DCV & WebRTC"',
         '  }',
         '}'
       ];
@@ -1005,9 +1034,15 @@ app.get('/vnc.html', (req, res) => {
       ctx.fillStyle = '#6ee7b7';
       ctx.fillText('Finder (/Users/dev-m4max/Projects)  +  Activity Monitor (Apple M4 Max 40-Core GPU)', w3.x + 12, w3.y + 17);
 
-      const macFiles = ['[FOLDER] CoreML-Llama3-Runner', '[FOLDER] MetalComputeShaders', '[FILE]   Package.swift (2.4 KB)', '[FILE]   MacWorkspaceApp.swift (11.6 KB)'];
+      const macFiles = [
+        '[FILE] setup-amazon-dcv-macos.sh (3.8 KB)',
+        '[FILE] launchctl-bootstrap-bvnc-console.sh (3.4 KB)',
+        '[FILE] com.bvnc.macconsole.plist (920 B)',
+        '[FILE] dcv.conf (web-port=8443, quic=true)',
+        '[FILE] bvnc-connection-profile.json'
+      ];
       macFiles.forEach((f, i) => {
-        ctx.fillStyle = f.startsWith('[FOLDER]') ? '#38bdf8' : '#e2e8f0';
+        ctx.fillStyle = f.includes('setup') || f.includes('launchctl') ? '#38bdf8' : '#e2e8f0';
         ctx.fillText(f, w3.x + 16, w3.y + 52 + i * 22);
       });
 
